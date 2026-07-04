@@ -194,12 +194,11 @@
             border-color: var(--omega-navy);
         }
 
-        /* High-Visibility Export Button Alignment Style */
         .export-btn {
             background-color: #16a34a !important;
             color: white !important;
             border-color: #15803d !important;
-            margin-left: auto; /* Pushes the export button cleanly to the far right */
+            margin-left: auto;
         }
         .export-btn:hover {
             background-color: #15803d !important;
@@ -216,7 +215,6 @@
 
         table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
         
-        /* Deep Omega Navy Header Matrix */
         th { 
             background-color: var(--omega-navy); 
             padding: 6px 8px; 
@@ -244,7 +242,6 @@
         tr:nth-child(even) td { background-color: #f9fafb; } 
         tr:hover td { background-color: #f3f4f6; }
 
-        /* Compact Controls Form Factor */
         input[type="date"], input[type="text"], select {
             background-color: #ffffff;
             color: var(--text-main);
@@ -260,15 +257,13 @@
         
         input:focus, select:focus { border-color: var(--omega-navy); outline: none; }
         
-        /* Disabled input visual state for read-only rows */
         input:disabled, select:disabled {
             background-color: #f3f4f6 !important;
-            color: #9ca3af !important;
+            color: #4b5563 !important; /* Slightly darker text for readability on locked view */
             border-color: #e5e7eb !important;
             cursor: not-allowed;
         }
 
-        /* Categorized Fleet Badging */
         .crit-badge { padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 800; text-transform: uppercase; display: inline-block; text-align: center; width: 45px; }
         .crit-badge.high { background-color: #fee2e2; color: var(--critical); border: 1px solid #fca5a5; }
         .crit-badge.medium { background-color: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
@@ -280,9 +275,8 @@
         .aging-tag.fresh { color: var(--text-muted); }
 
         .status-select.pending { color: var(--warning); background-color: #fff7ed; border-color: #fdba74; }
-        .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; }
+        .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; font-weight: 800; }
 
-        /* Action Save Matrix Controls */
         .save-row-btn {
             background-color: #ffffff;
             color: var(--omega-navy);
@@ -301,13 +295,30 @@
             background-color: var(--omega-navy); 
             color: #ffffff; 
         }
-        .save-row-btn:disabled {
-            background-color: #e5e7eb !important;
-            color: #9ca3af !important;
-            border-color: #d1d5db !important;
-            cursor: not-allowed;
-        }
         
+        /* Locked view text style */
+        .locked-text-view {
+            font-size: 11px;
+            font-weight: 600;
+            color: #374151;
+            white-space: normal;
+            word-break: break-word;
+            display: inline-block;
+            padding: 3px 0;
+        }
+        .locked-date-view {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--omega-navy);
+        }
+        .locked-badge-done {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
         .sync-btn {
             background-color: var(--omega-yellow);
             color: var(--omega-navy);
@@ -324,6 +335,15 @@
     </style>
 </head>
 <body>
+
+    <iframe name="hidden_submission_sandbox" style="display:none;"></iframe>
+
+    <form id="global-sync-form" method="POST" target="hidden_submission_sandbox" style="display:none;">
+        <input type="hidden" name="rowId" id="form-rowId">
+        <input type="hidden" name="plannedDate" id="form-plannedDate">
+        <input type="hidden" name="action" id="form-action">
+        <input type="hidden" name="status" id="form-status">
+    </form>
 
     <header>
         <div>
@@ -356,7 +376,7 @@
         <div class="stat-card pending">
             <div class="stat-title">Active Fleet Backlog</div>
             <div class="stat-leader" id="total-backlog-counter">0</div>
-            <div class="stat-sub">Total Unresolved Equipment Alerts</div>
+            <div class="stat-sub">Total Unresolved Equipment Items</div>
         </div>
     </div>
 
@@ -390,14 +410,13 @@
     </div>
 
     <script>
-        // Paste your exact macro deployment endpoint URL down below inside the string block:
+        // Paste your latest micro-service Apps Script Web App Deployment URL directly inside this string
         const API_URL = "https://script.google.com/macros/s/AKfycbwuoFWmnu-6F0X5U1n7ELNJhco3WzVUbiE8S6CJw35sgpf4VoJqNj9_SjMJ_a0y5Wg5/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
         let activeSessionUser = null; 
 
-        // Registered Authorized Planners Directory (Master ADMIN Matrix Enabled)
         const PLANNER_REGISTRY = {
             "ADMIN": "TLPlanning2026",
             "ROICE": "Samal2026",
@@ -456,9 +475,13 @@
         }
 
         function calculateAgingDays(dateString, status) {
-            if (status === "DONE" || !dateString) return 0;
+            const directStatus = (status || "PENDING").toString().toUpperCase().trim();
+            if (directStatus === "DONE" || !dateString) return 0;
+            
             const start = new Date(dateString);
             const end = new Date();
+            if (isNaN(start.getTime())) return 0; 
+            
             start.setHours(0,0,0,0);
             end.setHours(0,0,0,0);
             if (start >= end) return 0;
@@ -505,20 +528,34 @@
             const tbody = document.getElementById('master-table-body');
             tbody.innerHTML = '';
 
+            if (!Array.isArray(rawGoogleSheetData) || rawGoogleSheetData.length === 0) {
+                document.getElementById('live-time-stamp').innerText = "⚠️ DATABASE ACTIVE BUT SHEET IS EMPTY.";
+                return;
+            }
+
             let plannerStats = {};
             let unresolvedCount = 0;
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
             rawGoogleSheetData.forEach((row) => {
-                const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
+                if (!row) return;
+                const unitNoClean = (row.unitNo || 'UNMAPPED').toString().trim();
+                const alertClean = (row.alert || 'NO_DESCRIPTION').toString().trim();
+                const uniqueKey = `${unitNoClean}_${alertClean}`;
                 
                 if (!consolidatedMap.has(uniqueKey)) {
-                    consolidatedMap.set(uniqueKey, { ...row, totalCounts: parseInt(row.totalCounts || 1), alliedRowIds: [row.rowId] });
+                    consolidatedMap.set(uniqueKey, { 
+                        ...row, 
+                        status: row.status || "PENDING", 
+                        planner: row.planner || "UNASSIGNED",
+                        totalCounts: parseInt(row.totalCounts || 1), 
+                        alliedRowIds: [row.rowId] 
+                    });
                 } else {
                     let existing = consolidatedMap.get(uniqueKey);
                     existing.totalCounts += parseInt(row.totalCounts || 1);
-                    if (new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
+                    if (row.dateCaptured && new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
                         existing.dateCaptured = row.dateCaptured;
                     }
                     existing.alliedRowIds.push(row.rowId);
@@ -529,19 +566,22 @@
 
             const displayDataArray = Array.from(consolidatedMap.values());
 
-            displayDataArray.forEach((row, index) => {
-                const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
-                if (row.planner) uniquePlanners.add(plannerKey);
+            displayDataArray.forEach((row) => {
+                const plannerKey = row.planner ? row.planner.toString().trim().toUpperCase() : "UNASSIGNED";
+                if (row.planner && plannerKey !== "UNASSIGNED") {
+                    uniquePlanners.add(plannerKey);
+                }
 
                 const computedCriticality = evaluateCriticality(row.alert);
-                const aging = calculateAgingDays(row.dateCaptured, row.status);
+                const currentStatus = (row.status || "PENDING").toString().toUpperCase().trim();
+                const aging = calculateAgingDays(row.dateCaptured, currentStatus);
 
-                if (row.status !== "DONE") {
+                if (currentStatus !== "DONE") {
                     unresolvedCount++;
                     if (!plannerStats[plannerKey]) {
                         plannerStats[plannerKey] = { rawVolume: 0, highCount: 0 };
                     }
-                    plannerStats[plannerKey].rawVolume += row.totalCounts;
+                    plannerStats[plannerKey].rawVolume += (parseInt(row.totalCounts) || 1);
                     if (computedCriticality === "HIGH") {
                         plannerStats[plannerKey].highCount += 1;
                     }
@@ -559,25 +599,49 @@
 
                 const linkedIdsString = row.alliedRowIds.join(',');
 
+                // Conditional Layout Rendering Architecture depending on DONE vs PENDING status
+                let plannedDateCellContent = "";
+                let actionCellContent = "";
+                let syncCellContent = "";
+                let statusSelectElement = "";
+
+                if (currentStatus === "DONE") {
+                    // Lock down the fields: Turn input elements into flat, static text blocks
+                    plannedDateCellContent = `<span class="locked-date-view">${row.plannedDate || 'N/A'}</span>`;
+                    actionCellContent = `<span class="locked-text-view">${row.action || 'No notes encoded.'}</span>`;
+                    statusSelectElement = `
+                        <select class="status-select done" disabled>
+                            <option value="DONE">✅ DONE</option>
+                        </select>
+                    `;
+                    syncCellContent = `<span class="locked-badge-done">LOCKED</span>`;
+                } else {
+                    // Row is active/pending: Maintain full field custom interactive capabilities
+                    plannedDateCellContent = `<input type="date" ${disableFlag} value="${row.plannedDate || ''}" onchange="updateLocalState('${linkedIdsString}', 'plannedDate', this.value)">`;
+                    actionCellContent = `<input type="text" ${disableFlag} value="${row.action || ''}" placeholder="Notes..." onchange="updateLocalState('${linkedIdsString}', 'action', this.value)">`;
+                    statusSelectElement = `
+                        <select class="status-select ${currentStatus.toLowerCase()}" ${disableFlag} onchange="updateStatusAndSync('${linkedIdsString}', this)">
+                            <option value="PENDING" ${currentStatus === 'PENDING' ? 'selected' : ''}>⏳ PENDING</option>
+                            <option value="DONE" ${currentStatus === 'DONE' ? 'selected' : ''}>✅ DONE</option>
+                        </select>
+                    `;
+                    syncCellContent = `<button id="btn-${row.alliedRowIds[0]}" class="save-row-btn" ${disableFlag} onclick="pushRowUpdate('${linkedIdsString}', '${row.alliedRowIds[0]}')">Save</button>`;
+                }
+
                 tr.innerHTML = `
                     <td style="color: var(--text-muted); font-weight: 700; font-size: 10px;">${row.dateCaptured || 'N/A'}</td>
                     <td style="font-weight: 800; color: #0284c7; font-size: 11px;">${row.unitNo || 'N/A'}</td>
-                    <td style="font-weight: 600;" title="${row.location}">${row.location || 'N/A'}</td>
+                    <td style="font-weight: 600;" title="${row.location || ''}">${row.location || 'N/A'}</td>
                     <td style="white-space: normal; line-height: 1.3; font-weight: 600; overflow: visible; text-overflow: clip;">${row.alert || 'N/A'}</td>
                     <td style="text-align: center; font-weight: 800; font-size: 11px; color: #000;">${row.totalCounts}</td>
                     <td style="text-align: center;"><span class="crit-badge ${computedCriticality.toLowerCase()}">${computedCriticality}</span></td>
-                    <td style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
+                    <td style="text-align: center;"><span class="aging-tag ${agingClass}">${currentStatus === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
                     <td style="font-weight: 700; color: var(--omega-navy);">${plannerKey}</td>
                     
-                    <td><input type="date" ${disableFlag} value="${row.plannedDate || ''}" onchange="updateLocalState('${linkedIdsString}', 'plannedDate', this.value)"></td>
-                    <td><input type="text" ${disableFlag} value="${row.action || ''}" placeholder="Notes..." onchange="updateLocalState('${linkedIdsString}', 'action', this.value)"></td>
-                    <td>
-                        <select class="status-select ${row.status.toLowerCase()}" ${disableFlag} onchange="updateStatusAndSync('${linkedIdsString}', this)">
-                            <option value="PENDING" ${row.status === 'PENDING' ? 'selected' : ''}>⏳ PENDING</option>
-                            <option value="DONE" ${row.status === 'DONE' ? 'selected' : ''}>✅ DONE</option>
-                        </select>
-                    </td>
-                    <td style="text-align: center;"><button id="btn-${row.alliedRowIds[0]}" class="save-row-btn" ${disableFlag} onclick="pushRowUpdate('${linkedIdsString}', '${row.alliedRowIds[0]}')">Save</button></td>
+                    <td>${plannedDateCellContent}</td>
+                    <td>${actionCellContent}</td>
+                    <td>${statusSelectElement}</td>
+                    <td style="text-align: center;">${syncCellContent}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -628,7 +692,7 @@
         function updateLocalState(idsString, field, val) {
             const rowIds = idsString.split(',').map(Number);
             rawGoogleSheetData.forEach(row => {
-                if (rowIds.includes(row.rowId)) {
+                if (row && rowIds.includes(row.rowId)) {
                     row[field] = val;
                 }
             });
@@ -637,7 +701,7 @@
         function updateStatusAndSync(idsString, element) {
             const rowIds = idsString.split(',').map(Number);
             rawGoogleSheetData.forEach(row => {
-                if (rowIds.includes(row.rowId)) {
+                if (row && rowIds.includes(row.rowId)) {
                     row.status = element.value;
                 }
             });
@@ -645,7 +709,7 @@
             pushRowUpdate(idsString, rowIds[0]);
         }
 
-        async function pushRowUpdate(idsString, targetBtnId) {
+        function pushRowUpdate(idsString, targetBtnId) {
             if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS")) {
                 alert("OFFLINE ENVIRONMENT: Log saved inside operational local array stream.");
                 processAndRenderDashboard();
@@ -653,57 +717,44 @@
             }
 
             const rowIds = idsString.split(',').map(Number);
-            const matchedRecord = rawGoogleSheetData.find(r => r.rowId === rowIds[0]);
+            const matchedRecord = rawGoogleSheetData.find(r => r && r.rowId === rowIds[0]);
+            if (!matchedRecord) return;
             
             const btn = document.getElementById(`btn-${targetBtnId}`);
             btn.innerText = "SAVING...";
-            btn.disabled = true; // Protects network socket stream from collision double clicks
+            btn.disabled = true; 
             btn.style.backgroundColor = "var(--omega-navy)";
             btn.style.color = "white";
 
-            try {
-                // Iteratively write modifications over matching row targets cleanly 
-                for (let currentId of rowIds) {
-                    const payload = {
-                        rowId: currentId,
-                        plannedDate: matchedRecord.plannedDate,
-                        action: matchedRecord.action,
-                        status: matchedRecord.status
-                    };
+            const form = document.getElementById('global-sync-form');
+            form.action = API_URL;
 
-                    const response = await fetch(API_URL, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "text/plain;charset=utf-8" // Protects Web App from pre-flight CORS blocks
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    const resultText = await response.text();
-                    if (resultText.includes("ERROR")) {
-                        throw new Error(resultText);
-                    }
-                }
-                
-                btn.innerText = "✔ LINKED";
-                btn.style.backgroundColor = "var(--success)";
+            rowIds.forEach((currentId, index) => {
                 setTimeout(() => {
-                    btn.style.backgroundColor = "";
-                    btn.style.color = "";
-                    btn.innerText = "Save";
-                    btn.disabled = false;
-                    loadDashboardData(); // Refreshes UI strictly upon verified execution receipt
-                }, 1200);
-            } catch (err) {
-                console.error("Network Exception Logged:", err);
-                alert("TRANSMISSION FAULT: " + err.message);
-                btn.innerText = "FAIL";
-                btn.disabled = false;
-                btn.style.backgroundColor = "var(--critical)";
-            }
+                    document.getElementById('form-rowId').value = currentId;
+                    document.getElementById('form-plannedDate').value = matchedRecord.plannedDate || "";
+                    document.getElementById('form-action').value = matchedRecord.action || "";
+                    document.getElementById('form-status').value = matchedRecord.status || "";
+                    
+                    form.submit(); 
+
+                    if (index === rowIds.length - 1) {
+                        setTimeout(() => {
+                            btn.innerText = "✔ LINKED";
+                            btn.style.backgroundColor = "var(--success)";
+                            setTimeout(() => {
+                                btn.style.backgroundColor = "";
+                                btn.style.color = "";
+                                btn.innerText = "Save";
+                                btn.disabled = false;
+                                loadDashboardData(); 
+                            }, 1000);
+                        }, 1000);
+                    }
+                }, index * 400); 
+            });
         }
 
-        /* Pure JavaScript Matrix Data Extraction Pipeline to Excel Compatible CSV Format */
         function exportTableToExcel() {
             if (!rawGoogleSheetData || rawGoogleSheetData.length === 0) {
                 alert("Export failed: No structured queue data exists to write.");
@@ -721,13 +772,14 @@
 
             let consolidatedMap = new Map();
             rawGoogleSheetData.forEach((row) => {
+                if (!row) return;
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 if (!consolidatedMap.has(uniqueKey)) {
                     consolidatedMap.set(uniqueKey, { ...row, totalCounts: parseInt(row.totalCounts || 1) });
                 } else {
                     let existing = consolidatedMap.get(uniqueKey);
                     existing.totalCounts += parseInt(row.totalCounts || 1);
-                    if (new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
+                    if (row.dateCaptured && new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
                         existing.dateCaptured = row.dateCaptured;
                     }
                     if (!existing.action && row.action) existing.action = row.action;
@@ -738,11 +790,12 @@
             const displayDataArray = Array.from(consolidatedMap.values());
 
             displayDataArray.forEach(row => {
-                const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                const plannerKey = row.planner ? row.planner.toString().trim().toUpperCase() : "UNASSIGNED";
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
 
                 const computedCriticality = evaluateCriticality(row.alert);
-                const aging = calculateAgingDays(row.dateCaptured, row.status);
+                const currentStatus = (row.status || "PENDING").toString().toUpperCase().trim();
+                const aging = calculateAgingDays(row.dateCaptured, currentStatus);
 
                 const escapeCSV = (text) => {
                     if (!text) return '""';
@@ -754,13 +807,13 @@
                     escapeCSV(row.unitNo),
                     escapeCSV(row.location),
                     escapeCSV(row.alert),
-                    row.totalCounts,
+                    row.totalCounts || 1,
                     escapeCSV(computedCriticality),
-                    row.status === 'DONE' ? '"RESOLVED"' : `"${aging} Days"`,
+                    currentStatus === 'DONE' ? '"RESOLVED"' : `"${aging} Days"`,
                     escapeCSV(plannerKey),
                     escapeCSV(row.plannedDate),
                     escapeCSV(row.action),
-                    escapeCSV(row.status)
+                    escapeCSV(currentStatus)
                 ];
                 csvRows.push(rowData.join(","));
             });
