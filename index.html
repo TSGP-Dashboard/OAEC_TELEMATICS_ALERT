@@ -385,8 +385,7 @@
     </div>
 
     <script>
-        // Target Google Web App Execution URL Core
-        const API_URL = "https://script.google.com/macros/s/AKfycbwycndmhVRQ-JmyAZesC5p52QjupUbyk6C8BXnVYHuMnSKMF_9bx1KtZcLwEWOiSqfOog/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxFe0e69EIVNE9ZEl52FORxcEKDFaCCXIQrgX4-VhcIKMgZpnSTM7r-D-XYucjitEAFlw/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
@@ -470,13 +469,12 @@
             return agingDays;
         }
 
-        // Global JSONP Callback handler to bypass CORS restrictions
+        // Global JSONP stream target callback handler to bypass CORS layout traps
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
             processAndRenderDashboard();
             document.getElementById('live-time-stamp').innerText = `OAEC BROADCAST LIVE | LAST UPDATED: ${new Date().toLocaleTimeString().toUpperCase()}`;
             
-            // Clean up old JSONP scripts from head
             const oldScript = document.getElementById('jsonp-sync-stream');
             if(oldScript) oldScript.remove();
         };
@@ -497,7 +495,7 @@
             try {
                 document.getElementById('live-time-stamp').innerText = "🔄 CONNECTING TO OMEGA ASIA SHEET DATABASE ENGINE...";
                 
-                // Dynamic JSONP tag injection execution strategy
+                // Construct dynamic script tag for JSONP compilation
                 const script = document.createElement('script');
                 script.id = 'jsonp-sync-stream';
                 script.src = `${API_URL}?callback=handleGoogleSheetResponse&_ts=${Date.now()}`;
@@ -669,7 +667,7 @@
 
             try {
                 for (let currentId of rowIds) {
-                    // Send payloads formatted matching x-www-form-urlencoded boundaries
+                    // Send via standard form parameters matching backend architecture bounds
                     const formPayload = new URLSearchParams();
                     formPayload.append("rowId", currentId);
                     formPayload.append("plannedDate", matchedRecord.plannedDate || "");
@@ -736,7 +734,6 @@
 
             displayDataArray.forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
-                
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
 
                 const computedCriticality = evaluateCriticality(row.alert);
@@ -774,7 +771,6 @@
             document.body.removeChild(link);
         }
 
-        // Initialize dashboard stream
         loadDashboardData();
     </script>
 </body>
