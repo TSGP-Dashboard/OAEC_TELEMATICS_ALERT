@@ -73,7 +73,30 @@
         .stat-card.risk .stat-badge { background: #fef2f2; color: var(--critical); border: 1px solid #fca5a5; }
         .stat-card.volume .stat-badge { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
 
-        .controls-panel { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; gap: 10px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02); flex-wrap: wrap; }
+        /* 📊 UPGRADE 3: ANALYTICS GRID PANEL STYLING */
+        .analytics-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 6px; margin-bottom: 6px; }
+        .analytics-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .analytics-header-title { font-size: 10px; font-weight: 800; color: var(--omega-navy); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        
+        .progress-container { margin-top: 12px; }
+        .progress-bar-bg { width: 100%; background: #e5e7eb; height: 14px; border-radius: 3px; overflow: hidden; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+        .progress-bar-fill { background: linear-gradient(90deg, #10b981, #16a34a); height: 100%; width: 0%; transition: width 0.4s ease-out; }
+        .progress-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--text-main); }
+        .progress-stats-row { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; font-weight: 700; color: var(--text-muted); }
+
+        .fault-chart-list { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+        .fault-chart-row { display: flex; align-items: center; gap: 6px; }
+        .fault-chart-label { width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 10px; color: var(--text-main); }
+        .fault-chart-bar-wrapper { flex-grow: 1; background: #f3f4f6; height: 10px; border-radius: 2px; overflow: hidden; position: relative; }
+        .fault-chart-bar-fill { background-color: var(--omega-navy); height: 100%; width: 0%; border-radius: 2px; transition: width 0.4s ease-out; }
+        .fault-chart-count { width: 25px; text-align: right; font-weight: 800; font-size: 10px; color: var(--text-main); }
+
+        /* 🔍 UPGRADE 1: ADVANCED CONTROLS SEARCH STRIP STYLING */
+        .controls-panel { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .search-input-group { position: relative; display: flex; align-items: center; }
+        .search-box { width: 140px; height: 22px; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 11px; font-weight: 600; }
+        .select-filter { width: 110px; height: 22px; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 11px; font-weight: 600; background-color: #fff; }
         .filter-label { font-size: 10px; color: var(--omega-navy); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         
         button.filter-pill { background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
@@ -111,7 +134,6 @@
         .sync-btn { background-color: var(--omega-yellow); color: var(--omega-navy); border: 1px solid var(--omega-yellow); font-weight: 800; text-transform: uppercase; padding: 3px 10px; font-size: 10px; }
         .sync-btn:hover { background-color: var(--omega-yellow-hover); border-color: var(--omega-yellow-hover); }
 
-        /* 🟦 MODAL DIALOG POPUP BOX STYLING */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.2s ease-in-out; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-box { background: white; border-radius: 6px; width: 340px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); border-top: 4px solid var(--omega-navy); padding: 14px; display: flex; flex-direction: column; gap: 10px; transform: scale(0.9); transition: all 0.2s ease-in-out; }
@@ -168,10 +190,57 @@
         </div>
     </div>
 
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <div class="analytics-header-title">
+                <span>Fleet Resolution Progression</span>
+                <span id="chart-percentage-text" style="color: var(--success);">0% Completed</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar-slider"></div>
+                    <div class="progress-text-overlay" id="progress-bar-text">0 / 0 Items</div>
+                </div>
+                <div class="progress-stats-row">
+                    <div>Cleared: <span id="analytics-cleared-count" style="color: var(--success);">0</span></div>
+                    <div>Remaining Backlog: <span id="analytics-pending-count" style="color: var(--warning);">0</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="analytics-card">
+            <div class="analytics-header-title">Top Recurrent Faults Leaderboard</div>
+            <div class="fault-chart-list" id="chart-faults-container">
+                <div style="color: var(--text-muted); font-size:10px; font-weight:700; text-align:center; padding-top:4px;">No fault metrics tracked yet.</div>
+            </div>
+        </div>
+    </div>
+
     <div class="controls-panel">
-        <span class="filter-label">Filter Queue Log:</span>
-        <div id="planner-filters-container" style="display:flex; gap:4px; align-items: center; flex-grow: 1;"></div>
-        <button class="filter-pill export-btn" onclick="exportTableToExcel()">📤 Export to Excel</button>
+        <div class="controls-row">
+            <span class="filter-label">Quick Search:</span>
+            <div class="search-input-group">
+                <input type="text" id="filter-search-unit" class="search-box" placeholder="🔎 Search Unit No..." oninput="handleAdvancedFiltersTrigger()">
+            </div>
+            
+            <span class="filter-label" style="margin-left: 6px;">Location:</span>
+            <select id="filter-select-location" class="select-filter" onchange="handleAdvancedFiltersTrigger()">
+                <option value="ALL">ALL SITES</option>
+            </select>
+
+            <span class="filter-label" style="margin-left: 6px;">Workflow:</span>
+            <select id="filter-select-status" class="select-filter" onchange="handleAdvancedFiltersTrigger()">
+                <option value="ALL">ALL LOGS</option>
+                <option value="PENDING">⏳ PENDING ONLY</option>
+                <option value="DONE">✅ DONE ONLY</option>
+            </select>
+            
+            <button class="filter-pill export-btn" onclick="exportTableToExcel()">📤 Export to Excel</button>
+        </div>
+        <div class="controls-row" style="border-top: 1px dashed var(--border); padding-top: 4px;">
+            <span class="filter-label">Planner Queues:</span>
+            <div id="planner-filters-container" style="display:flex; gap:4px; align-items: center;"></div>
+        </div>
     </div>
 
     <div class="table-wrapper">
@@ -179,14 +248,14 @@
             <thead>
                 <tr>
                     <th style="width: 65px;">Date Logged</th>
-                    <th style="width: 55px;">Unit No.</th>
+                    <th style="width: 50px;">Unit No.</th>
                     <th style="width: 120px;">Location</th>
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
-                    <th style="width: 45px; text-align: center;">Counts</th>
+                    <th style="width: 40px; text-align: center;">Counts</th>
                     <th style="width: 50px; text-align: center;">Criticality</th>
-                    <th style="width: 75px; text-align: center;">Aging</th>
+                    <th style="width: 65px; text-align: center;">Aging</th>
                     <th style="width: 75px;">Planner</th>
-                    <th style="width: 110px;">Planned Repair Date</th>
+                    <th style="width: 90px;">Planned Repair Date</th>
                     <th style="width: 160px;">Corrective Action Notes</th>
                     <th style="width: 95px;">Status Workflow</th>
                     <th style="width: 55px; text-align: center;">Action</th>
@@ -228,9 +297,10 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbz53dxsQQfg_4PJ0z7fjD_KtmzLkKfW41nEJVLZM8aSnnnhhdc6qS2Awn8JjfEt4M-WvQ/exec";
         
         let rawGoogleSheetData = [];
+        let consolidatedDisplayRecords = []; // Stores consolidated rows
         let selectedPlannerFilter = "ALL";
         let activeSessionUser = null; 
-        let activeEditingGroup = null; // Track record reference for modal processing
+        let activeEditingGroup = null; 
 
         const PLANNER_REGISTRY = {
             "ADMIN": "TLPlanning2026",
@@ -301,6 +371,19 @@
 
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
+            
+            // Extract distinct location tags dynamically to populate select control
+            const locationSelect = document.getElementById('filter-select-location');
+            const savedValue = locationSelect.value;
+            locationSelect.innerHTML = '<option value="ALL">ALL SITES</option>';
+            
+            let distinctLocations = new Set();
+            rawGoogleSheetData.forEach(r => { if(r.location) distinctLocations.add(r.location.trim().toUpperCase()); });
+            Array.from(distinctLocations).sort().forEach(loc => {
+                locationSelect.innerHTML += `<option value="${loc}">${loc}</option>`;
+            });
+            if(Array.from(distinctLocations).includes(savedValue)) locationSelect.value = savedValue;
+
             processAndRenderDashboard();
             document.getElementById('live-time-stamp').innerText = `OAEC BROADCAST LIVE | LAST UPDATED: ${new Date().toLocaleTimeString().toUpperCase()}`;
             
@@ -311,7 +394,6 @@
         async function loadDashboardData() {
             try {
                 document.getElementById('live-time-stamp').innerText = "🔄 CONNECTING TO OMEGA ASIA SHEET DATABASE ENGINE...";
-                
                 const script = document.createElement('script');
                 script.id = 'jsonp-sync-stream';
                 script.src = `${API_URL}?callback=handleGoogleSheetResponse&_ts=${Date.now()}`;
@@ -323,14 +405,12 @@
         }
 
         function processAndRenderDashboard() {
-            const tbody = document.getElementById('master-table-body');
-            tbody.innerHTML = '';
-
             let plannerStats = {};
             let unresolvedCount = 0;
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
+            // Perform underlying identical row consolidation logic mapping
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 
@@ -348,14 +428,15 @@
                 }
             });
 
-            const displayDataArray = Array.from(consolidatedMap.values());
+            consolidatedDisplayRecords = Array.from(consolidatedMap.values());
 
-            displayDataArray.forEach((row) => {
+            // 📊 UPGRADE 3 CHART ENGINE: Run metrics before visual row pruning filters apply
+            renderAnalyticsChartsLayer(consolidatedDisplayRecords);
+
+            // Calculate planner statistics and leaderboards from pre-filtered lists
+            consolidatedDisplayRecords.forEach((row) => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 if (row.planner) uniquePlanners.add(plannerKey);
-
-                const computedCriticality = (row.criticality || "LOW").toUpperCase();
-                const aging = calculateAgingDays(row.dateCaptured, row.status);
 
                 if (row.status !== "DONE") {
                     unresolvedCount++;
@@ -363,12 +444,111 @@
                         plannerStats[plannerKey] = { rawVolume: 0, highCount: 0 };
                     }
                     plannerStats[plannerKey].rawVolume += row.totalCounts;
-                    if (computedCriticality === "HIGH") {
+                    if ((row.criticality || "LOW").toUpperCase() === "HIGH") {
                         plannerStats[plannerKey].highCount += 1;
                     }
                 }
+            });
 
+            document.getElementById('total-backlog-counter').innerText = unresolvedCount;
+
+            let topRiskName = "NONE", topRiskVal = 0;
+            let topVolName = "NONE", topVolVal = 0;
+
+            for (let name in plannerStats) {
+                if (plannerStats[name].highCount > topRiskVal) { topRiskVal = plannerStats[name].highCount; topRiskName = name; }
+                if (plannerStats[name].rawVolume > topVolVal) { topVolVal = plannerStats[name].rawVolume; topVolName = name; }
+            }
+
+            document.getElementById('leader-risk').innerText = topRiskName;
+            document.getElementById('leader-risk-sub').innerText = `${topRiskVal} CRITICAL ACTIONS`;
+            document.getElementById('leader-volume').innerText = topVolName;
+            document.getElementById('leader-volume-sub').innerText = `${topVolVal} FAULT OCCURRENCES`;
+
+            populatePlannerFilters(Array.from(uniquePlanners));
+            renderTableRowsWithFilters();
+        }
+
+        // 📊 UPGRADE 3: RENDER VISUAL PROGRESSION AND LEADERBOARD DATA
+        function renderAnalyticsChartsLayer(records) {
+            const total = records.length;
+            const cleared = records.filter(r => r.status === "DONE").length;
+            const pending = total - cleared;
+            const pct = total > 0 ? Math.round((cleared / total) * 100) : 0;
+
+            // Update Progress UI Elements
+            document.getElementById('chart-percentage-text').innerText = `${pct}% Completed`;
+            document.getElementById('progress-bar-slider').style.width = `${pct}%`;
+            document.getElementById('progress-bar-text').innerText = `${cleared} / ${total} Alerts Cleared`;
+            document.getElementById('analytics-cleared-count').innerText = cleared;
+            document.getElementById('analytics-pending-count').innerText = pending;
+
+            // Generate Top Faults Occurrence Dictionary Array
+            let faultFrequencies = {};
+            records.forEach(r => {
+                if (r.status !== "DONE" && r.alert) {
+                    const desc = r.alert.trim();
+                    faultFrequencies[desc] = (faultFrequencies[desc] || 0) + r.totalCounts;
+                }
+            });
+
+            const sortedFaults = Object.entries(faultFrequencies)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3); // Get top 3 recurring problem sets
+
+            const chartContainer = document.getElementById('chart-faults-container');
+            if (sortedFaults.length === 0) {
+                chartContainer.innerHTML = '<div style="color: var(--text-muted); font-size:10px; font-weight:700; text-align:center; padding-top:14px;">All clear! No pending faults logged.</div>';
+                return;
+            }
+
+            const maxOccurrence = sortedFaults[0][1];
+            chartContainer.innerHTML = '';
+
+            sortedFaults.forEach(([faultName, count]) => {
+                const barWidth = maxOccurrence > 0 ? Math.round((count / maxOccurrence) * 100) : 0;
+                chartContainer.innerHTML += `
+                    <div class="fault-chart-row">
+                        <div class="fault-chart-label" title="${faultName}">${faultName}</div>
+                        <div class="fault-chart-bar-wrapper">
+                            <div class="fault-chart-bar-fill" style="width: ${barWidth}%;"></div>
+                        </div>
+                        <div class="fault-chart-count">${count}x</div>
+                    </div>
+                `;
+            });
+        }
+
+        // 🔍 UPGRADE 1: LIVE FILTER AND SEARCH MULTI-LAYER EXECUTION MATRIX
+        function handleAdvancedFiltersTrigger() {
+            renderTableRowsWithFilters();
+        }
+
+        function renderTableRowsWithFilters() {
+            const tbody = document.getElementById('master-table-body');
+            tbody.innerHTML = '';
+
+            const searchSearchQuery = document.getElementById('filter-search-unit').value.trim().toUpperCase();
+            const locationSelectQuery = document.getElementById('filter-select-location').value;
+            const statusSelectQuery = document.getElementById('filter-select-status').value;
+
+            consolidatedDisplayRecords.forEach((row) => {
+                const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                
+                // 1. Check Primary Planner Pill Filter
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
+
+                // 2. Check Unit Search Input Box Filter
+                if (searchSearchQuery && !row.unitNo?.toUpperCase().includes(searchSearchQuery)) return;
+
+                // 3. Check Location Selected Dropdown Filter
+                if (locationSelectQuery !== "ALL" && row.location?.trim().toUpperCase() !== locationSelectQuery) return;
+
+                // 4. Check Workflow Status Selection Dropdown Filter
+                if (statusSelectQuery !== "ALL" && row.status !== statusSelectQuery) return;
+
+                const computedCriticality = (row.criticality || "LOW").toUpperCase();
+                const aging = calculateAgingDays(row.dateCaptured, row.status);
 
                 const isRowEditable = (activeSessionUser === "ADMIN") || (activeSessionUser !== null && activeSessionUser === plannerKey);
                 const disableFlag = isRowEditable ? "" : "disabled";
@@ -399,23 +579,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-
-            document.getElementById('total-backlog-counter').innerText = unresolvedCount;
-
-            let topRiskName = "NONE", topRiskVal = 0;
-            let topVolName = "NONE", topVolVal = 0;
-
-            for (let name in plannerStats) {
-                if (plannerStats[name].highCount > topRiskVal) { topRiskVal = plannerStats[name].highCount; topRiskName = name; }
-                if (plannerStats[name].rawVolume > topVolVal) { topVolVal = plannerStats[name].rawVolume; topVolName = name; }
-            }
-
-            document.getElementById('leader-risk').innerText = topRiskName;
-            document.getElementById('leader-risk-sub').innerText = `${topRiskVal} CRITICAL ACTIONS`;
-            document.getElementById('leader-volume').innerText = topVolName;
-            document.getElementById('leader-volume-sub').innerText = `${topVolVal} FAULT OCCURRENCES`;
-
-            populatePlannerFilters(Array.from(uniquePlanners));
         }
 
         function populatePlannerFilters(plannerList) {
@@ -427,7 +590,10 @@
             allBtn.innerText = "ALL FLEET QUEUES";
             allBtn.onclick = function() {
                 selectedPlannerFilter = "ALL";
-                processAndRenderDashboard();
+                // Reset styling active selection switches
+                document.querySelectorAll('#planner-filters-container button').forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+                renderTableRowsWithFilters();
             };
             container.appendChild(allBtn);
 
@@ -437,13 +603,14 @@
                 btn.innerText = planner;
                 btn.onclick = function() {
                     selectedPlannerFilter = planner;
-                    processAndRenderDashboard();
+                    document.querySelectorAll('#planner-filters-container button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderTableRowsWithFilters();
                 };
                 container.appendChild(btn);
             });
         }
 
-        // 🟦 MODAL CONTROL ACTIONS INTERACTION METHODS
         function openEditModal(idsString, unitNo, plannedDate, actionNotes, currentStatus) {
             activeEditingGroup = idsString;
             
@@ -473,7 +640,6 @@
 
             const rowIds = activeEditingGroup.split(',').map(Number);
 
-            // Update state in local view cache immediately for real-time speed feel
             rawGoogleSheetData.forEach(row => {
                 if (rowIds.includes(row.rowId)) {
                     row.plannedDate = targetDate;
@@ -503,7 +669,7 @@
                     submitBtn.innerText = "Save Changes";
                     submitBtn.disabled = false;
                     closeEditModal();
-                    loadDashboardData(); // Force re-sync stream to guarantee true state match
+                    loadDashboardData(); 
                 }, 800);
 
             } catch (err) {
@@ -514,10 +680,14 @@
         }
 
         function exportTableToExcel() {
-            if (!rawGoogleSheetData || rawGoogleSheetData.length === 0) {
+            if (!consolidatedDisplayRecords || consolidatedDisplayRecords.length === 0) {
                 alert("Export failed: No data found.");
                 return;
             }
+
+            const searchSearchQuery = document.getElementById('filter-search-unit').value.trim().toUpperCase();
+            const locationSelectQuery = document.getElementById('filter-select-location').value;
+            const statusSelectQuery = document.getElementById('filter-select-status').value;
 
             const headers = [
                 "Date Logged", "Unit No", "Location", "Alert Log Description", 
@@ -528,20 +698,14 @@
             let csvRows = [];
             csvRows.push(headers.join(",")); 
 
-            let consolidatedMap = new Map();
-            rawGoogleSheetData.forEach((row) => {
-                const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
-                if (!consolidatedMap.has(uniqueKey)) {
-                    consolidatedMap.set(uniqueKey, { ...row, totalCounts: parseInt(row.totalCounts || 1) });
-                } else {
-                    let existing = consolidatedMap.get(uniqueKey);
-                    existing.totalCounts += parseInt(row.totalCounts || 1);
-                }
-            });
-
-            Array.from(consolidatedMap.values()).forEach(row => {
+            consolidatedDisplayRecords.forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                
+                // Mirror the advanced filter layout exactly onto the generated report spreadsheet
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
+                if (searchSearchQuery && !row.unitNo?.toUpperCase().includes(searchSearchQuery)) return;
+                if (locationSelectQuery !== "ALL" && row.location?.trim().toUpperCase() !== locationSelectQuery) return;
+                if (statusSelectQuery !== "ALL" && row.status !== statusSelectQuery) return;
 
                 const aging = calculateAgingDays(row.dateCaptured, row.status);
                 const escapeCSV = (text) => !text ? '""' : `"${text.toString().replace(/"/g, '""')}"`;
@@ -565,7 +729,7 @@
             const csvBlob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(csvBlob);
-            link.setAttribute("download", `oaec_telematics_report_${selectedPlannerFilter.toLowerCase()}_2026.csv`);
+            link.setAttribute("download", `oaec_filtered_telematics_report_2026.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
