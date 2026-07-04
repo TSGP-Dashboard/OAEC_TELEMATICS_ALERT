@@ -180,7 +180,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwwaY7hc3n7GKPt-a8DlPg5BbH9eDBV4R6i3-075wZqlHho3yoXB9rlI2S5wYLRBFPEig/exec";
+        // PASTE YOUR EXTRACTED WEB APP DEPLOYMENT URL HERE
+        const API_URL = "https://script.google.com/macros/s/AKfycbz53dxsQQfg_4PJ0z7fjD_KtmzLkKfW41nEJVLZM8aSnnnhhdc6qS2Awn8JjfEt4M-WvQ/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
@@ -253,7 +254,7 @@
             return agingDays;
         }
 
-        // Global JSONP dynamic callback handling to bypass script container cross-origin blockades
+        // JSONP Stream handler to completely avoid cross-origin resource blockades
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
             processAndRenderDashboard();
@@ -286,7 +287,7 @@
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
-            // Consolidate repeating occurrences matching exactly against distinct equipment alert signatures
+            // Consolidate identical alerts per Unit No
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 
@@ -456,7 +457,7 @@
                     loadDashboardData(); 
                 }, 1000);
             } catch (err) {
-                alert("TRANSMISSION FAULT: Sheet connection interrupted during field mapping updates.");
+                alert("TRANSMISSION FAULT: Sheet connection interrupted.");
                 btn.innerText = "FAIL";
                 btn.style.backgroundColor = "var(--critical)";
             }
@@ -464,7 +465,7 @@
 
         function exportTableToExcel() {
             if (!rawGoogleSheetData || rawGoogleSheetData.length === 0) {
-                alert("Export failed: No structured queue data exists to write.");
+                alert("Export failed: No data found.");
                 return;
             }
 
