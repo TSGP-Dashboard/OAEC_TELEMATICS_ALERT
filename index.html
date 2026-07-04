@@ -85,14 +85,10 @@
         .table-wrapper { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
         th { background-color: var(--omega-navy); padding: 6px 8px; color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #111827; letter-spacing: 0.3px; }
-        td { padding: 4px 8px; border-bottom: 1px solid #e5e7eb; font-size: 11px; font-weight: 600; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
+        td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; font-size: 11px; font-weight: 600; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) td { background-color: #f9fafb; } 
         tr:hover td { background-color: #f3f4f6; }
-
-        input[type="date"], input[type="text"], select { background-color: #ffffff; color: var(--text-main); border: 1px solid #cbd5e1; padding: 2px 4px; border-radius: 3px; font-size: 11px; font-weight: 600; box-sizing: border-box; width: 100%; height: 22px; }
-        input:focus, select:focus { border-color: var(--omega-navy); outline: none; }
-        input:disabled, select:disabled { background-color: #f3f4f6 !important; color: #9ca3af !important; border-color: #e5e7eb !important; cursor: not-allowed; }
 
         .crit-badge { padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 800; text-transform: uppercase; display: inline-block; text-align: center; width: 45px; }
         .crit-badge.high { background-color: #fee2e2; color: var(--critical); border: 1px solid #fca5a5; }
@@ -104,14 +100,35 @@
         .aging-tag.warning { color: var(--warning); }
         .aging-tag.fresh { color: var(--text-muted); }
 
-        .status-select.pending { color: var(--warning); background-color: #fff7ed; border-color: #fdba74; }
-        .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; }
+        .status-badge-inline { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .status-badge-inline.pending { color: var(--warning); background-color: #fff7ed; border: 1px solid #fdba74; }
+        .status-badge-inline.done { color: var(--success); background-color: #f0fdf4; border: 1px solid #86efac; }
 
-        .save-row-btn { background-color: #ffffff; color: var(--omega-navy); border: 1px solid var(--omega-navy); padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; height: 22px; box-sizing: border-box; transition: all 0.1s ease; }
-        .save-row-btn:hover { background-color: var(--omega-navy); color: #ffffff; }
-        .save-row-btn:disabled { background-color: #e5e7eb !important; color: #9ca3af !important; border-color: #d1d5db !important; cursor: not-allowed; }
+        .edit-action-btn { background-color: #ffffff; color: var(--omega-navy); border: 1px solid var(--omega-navy); padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: all 0.1s ease; }
+        .edit-action-btn:hover { background-color: var(--omega-navy); color: #ffffff; }
+        .edit-action-btn:disabled { background-color: #e5e7eb !important; color: #9ca3af !important; border-color: #d1d5db !important; cursor: not-allowed; }
+        
         .sync-btn { background-color: var(--omega-yellow); color: var(--omega-navy); border: 1px solid var(--omega-yellow); font-weight: 800; text-transform: uppercase; padding: 3px 10px; font-size: 10px; }
         .sync-btn:hover { background-color: var(--omega-yellow-hover); border-color: var(--omega-yellow-hover); }
+
+        /* 🟦 MODAL DIALOG POPUP BOX STYLING */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.2s ease-in-out; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; border-radius: 6px; width: 340px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); border-top: 4px solid var(--omega-navy); padding: 14px; display: flex; flex-direction: column; gap: 10px; transform: scale(0.9); transition: all 0.2s ease-in-out; }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 2px; }
+        .modal-header h3 { margin: 0; font-size: 12px; font-weight: 800; color: var(--omega-navy); text-transform: uppercase; }
+        .modal-close { background: none; border: none; font-size: 16px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+        .modal-close:hover { color: var(--critical); }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .form-group input, .form-group select { background-color: #ffffff; color: var(--text-main); border: 1px solid #cbd5e1; padding: 4px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; box-sizing: border-box; height: 26px; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--omega-navy); outline: none; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; border-top: 1px solid #e5e7eb; padding-top: 10px; }
+        .modal-btn { padding: 4px 12px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; border: 1px solid var(--border); background: #f3f4f6; color: #374151; }
+        .modal-btn.save-confirm-btn { background-color: var(--omega-yellow); color: var(--omega-navy); border-color: var(--omega-yellow); font-weight: 800; }
+        .modal-btn.save-confirm-btn:hover { background-color: var(--omega-yellow-hover); border-color: var(--omega-yellow-hover); }
+        .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -161,31 +178,59 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 75px;">Date Logged</th>
+                    <th style="width: 65px;">Date Logged</th>
                     <th style="width: 55px;">Unit No.</th>
                     <th style="width: 120px;">Location</th>
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
                     <th style="width: 45px; text-align: center;">Counts</th>
-                    <th style="width: 60px; text-align: center;">Criticality</th>
+                    <th style="width: 50px; text-align: center;">Criticality</th>
                     <th style="width: 75px; text-align: center;">Aging</th>
                     <th style="width: 75px;">Planner</th>
                     <th style="width: 110px;">Planned Repair Date</th>
                     <th style="width: 160px;">Corrective Action Notes</th>
                     <th style="width: 95px;">Status Workflow</th>
-                    <th style="width: 45px; text-align: center;">Sync</th>
+                    <th style="width: 55px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody id="master-table-body"></tbody>
         </table>
     </div>
 
+    <div class="modal-overlay" id="edit-popup-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-unit-title">Update Record</h3>
+                <button class="modal-close" onclick="closeEditModal()">✕</button>
+            </div>
+            <div class="form-group">
+                <label>Planned Repair Date</label>
+                <input type="date" id="modal-field-date">
+            </div>
+            <div class="form-group">
+                <label>Corrective Action Notes</label>
+                <input type="text" id="modal-field-action" placeholder="Enter logs or update notes...">
+            </div>
+            <div class="form-group">
+                <label>Status Workflow</label>
+                <select id="modal-field-status">
+                    <option value="PENDING">⏳ PENDING</option>
+                    <option value="DONE">✅ DONE</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn" onclick="closeEditModal()">Cancel</button>
+                <button class="modal-btn save-confirm-btn" id="modal-submit-btn" onclick="submitModalDataUpdate()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // PASTE YOUR EXTRACTED WEB APP DEPLOYMENT URL HERE
         const API_URL = "https://script.google.com/macros/s/AKfycbz53dxsQQfg_4PJ0z7fjD_KtmzLkKfW41nEJVLZM8aSnnnhhdc6qS2Awn8JjfEt4M-WvQ/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
         let activeSessionUser = null; 
+        let activeEditingGroup = null; // Track record reference for modal processing
 
         const PLANNER_REGISTRY = {
             "ADMIN": "TLPlanning2026",
@@ -254,7 +299,6 @@
             return agingDays;
         }
 
-        // JSONP Stream handler to completely avoid cross-origin resource blockades
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
             processAndRenderDashboard();
@@ -287,7 +331,6 @@
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
-            // Consolidate identical alerts per Unit No
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 
@@ -347,15 +390,12 @@
                     <td style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
                     <td style="font-weight: 700; color: var(--omega-navy);">${plannerKey}</td>
                     
-                    <td><input type="date" ${disableFlag} value="${row.plannedDate || ''}" onchange="updateLocalState('${linkedIdsString}', 'plannedDate', this.value)"></td>
-                    <td><input type="text" ${disableFlag} value="${row.action || ''}" placeholder="Notes..." onchange="updateLocalState('${linkedIdsString}', 'action', this.value)"></td>
-                    <td>
-                        <select class="status-select ${row.status.toLowerCase()}" ${disableFlag} onchange="updateStatusAndSync('${linkedIdsString}', this)">
-                            <option value="PENDING" ${row.status === 'PENDING' ? 'selected' : ''}>⏳ PENDING</option>
-                            <option value="DONE" ${row.status === 'DONE' ? 'selected' : ''}>✅ DONE</option>
-                        </select>
+                    <td style="color: var(--text-muted); font-weight: 700;">${row.plannedDate || '—'}</td>
+                    <td style="font-weight: 600;" title="${row.action || ''}">${row.action || '—'}</td>
+                    <td style="text-align: center;"><span class="status-badge-inline ${row.status.toLowerCase()}">${row.status === 'DONE' ? '✅ DONE' : '⏳ PENDING'}</span></td>
+                    <td style="text-align: center;">
+                        <button class="edit-action-btn" ${disableFlag} onclick="openEditModal('${linkedIdsString}', '${row.unitNo}', '${row.plannedDate || ''}', '${row.action || ''}', '${row.status || 'PENDING'}')">📝 Edit</button>
                     </td>
-                    <td style="text-align: center;"><button id="btn-${row.alliedRowIds[0]}" class="save-row-btn" ${disableFlag} onclick="pushRowUpdate('${linkedIdsString}', '${row.alliedRowIds[0]}')">Save</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -403,42 +443,52 @@
             });
         }
 
-        function updateLocalState(idsString, field, val) {
-            const rowIds = idsString.split(',').map(Number);
-            rawGoogleSheetData.forEach(row => {
-                if (rowIds.includes(row.rowId)) {
-                    row[field] = val;
-                }
-            });
-        }
-
-        function updateStatusAndSync(idsString, element) {
-            const rowIds = idsString.split(',').map(Number);
-            rawGoogleSheetData.forEach(row => {
-                if (rowIds.includes(row.rowId)) {
-                    row.status = element.value;
-                }
-            });
-            element.className = `status-select ${element.value.toLowerCase()}`;
-            pushRowUpdate(idsString, rowIds[0]);
-        }
-
-        async function pushRowUpdate(idsString, targetBtnId) {
-            const rowIds = idsString.split(',').map(Number);
-            const matchedRecord = rawGoogleSheetData.find(r => r.rowId === rowIds[0]);
+        // 🟦 MODAL CONTROL ACTIONS INTERACTION METHODS
+        function openEditModal(idsString, unitNo, plannedDate, actionNotes, currentStatus) {
+            activeEditingGroup = idsString;
             
-            const btn = document.getElementById(`btn-${targetBtnId}`);
-            btn.innerText = "SAVING...";
-            btn.style.backgroundColor = "var(--omega-navy)";
-            btn.style.color = "white";
+            document.getElementById('modal-unit-title').innerText = `Update Logs — ${unitNo}`;
+            document.getElementById('modal-field-date').value = plannedDate;
+            document.getElementById('modal-field-action').value = actionNotes;
+            document.getElementById('modal-field-status').value = currentStatus;
+            
+            document.getElementById('edit-popup-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-popup-modal').classList.remove('active');
+            activeEditingGroup = null;
+        }
+
+        async function submitModalDataUpdate() {
+            if (!activeEditingGroup) return;
+
+            const targetDate = document.getElementById('modal-field-date').value;
+            const targetAction = document.getElementById('modal-field-action').value.trim();
+            const targetStatus = document.getElementById('modal-field-status').value;
+
+            const submitBtn = document.getElementById('modal-submit-btn');
+            submitBtn.innerText = "SAVING...";
+            submitBtn.disabled = true;
+
+            const rowIds = activeEditingGroup.split(',').map(Number);
+
+            // Update state in local view cache immediately for real-time speed feel
+            rawGoogleSheetData.forEach(row => {
+                if (rowIds.includes(row.rowId)) {
+                    row.plannedDate = targetDate;
+                    row.action = targetAction;
+                    row.status = targetStatus;
+                }
+            });
 
             try {
                 for (let currentId of rowIds) {
                     const formPayload = new URLSearchParams();
                     formPayload.append("rowId", currentId);
-                    formPayload.append("plannedDate", matchedRecord.plannedDate || "");
-                    formPayload.append("action", matchedRecord.action || "");
-                    formPayload.append("status", matchedRecord.status || "PENDING");
+                    formPayload.append("plannedDate", targetDate || "");
+                    formPayload.append("action", targetAction || "");
+                    formPayload.append("status", targetStatus || "PENDING");
 
                     await fetch(API_URL, {
                         method: "POST",
@@ -448,18 +498,18 @@
                     });
                 }
                 
-                btn.innerText = "✔ LINKED";
-                btn.style.backgroundColor = "var(--success)";
+                submitBtn.innerText = "SUCCESS!";
                 setTimeout(() => {
-                    btn.style.backgroundColor = "";
-                    btn.style.color = "";
-                    btn.innerText = "Save";
-                    loadDashboardData(); 
-                }, 1000);
+                    submitBtn.innerText = "Save Changes";
+                    submitBtn.disabled = false;
+                    closeEditModal();
+                    loadDashboardData(); // Force re-sync stream to guarantee true state match
+                }, 800);
+
             } catch (err) {
                 alert("TRANSMISSION FAULT: Sheet connection interrupted.");
-                btn.innerText = "FAIL";
-                btn.style.backgroundColor = "var(--critical)";
+                submitBtn.innerText = "Save Changes";
+                submitBtn.disabled = false;
             }
         }
 
