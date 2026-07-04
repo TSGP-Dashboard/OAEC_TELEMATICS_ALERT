@@ -199,7 +199,7 @@
             background-color: #16a34a !important;
             color: white !important;
             border-color: #15803d !important;
-            margin-left: auto; /* Pushes the export button cleanly to the far right */
+            margin-left: auto; 
         }
         .export-btn:hover {
             background-color: #15803d !important;
@@ -216,7 +216,6 @@
 
         table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
         
-        /* Deep Omega Navy Header Matrix */
         th { 
             background-color: var(--omega-navy); 
             padding: 6px 8px; 
@@ -244,7 +243,6 @@
         tr:nth-child(even) td { background-color: #f9fafb; } 
         tr:hover td { background-color: #f3f4f6; }
 
-        /* Compact Controls Form Factor */
         input[type="date"], input[type="text"], select {
             background-color: #ffffff;
             color: var(--text-main);
@@ -260,7 +258,6 @@
         
         input:focus, select:focus { border-color: var(--omega-navy); outline: none; }
         
-        /* Disabled input visual state for read-only rows */
         input:disabled, select:disabled {
             background-color: #f3f4f6 !important;
             color: #9ca3af !important;
@@ -268,7 +265,6 @@
             cursor: not-allowed;
         }
 
-        /* Categorized Fleet Badging */
         .crit-badge { padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 800; text-transform: uppercase; display: inline-block; text-align: center; width: 45px; }
         .crit-badge.high { background-color: #fee2e2; color: var(--critical); border: 1px solid #fca5a5; }
         .crit-badge.medium { background-color: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
@@ -282,7 +278,6 @@
         .status-select.pending { color: var(--warning); background-color: #fff7ed; border-color: #fdba74; }
         .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; }
 
-        /* Action Save Matrix Controls */
         .save-row-btn {
             background-color: #ffffff;
             color: var(--omega-navy);
@@ -390,14 +385,13 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwuoFWmnu-6F0X5U1n7ELNJhco3WzVUbiE8S6CJw35sgpf4VoJqNj9_SjMJ_a0y5Wg5/exec";
+        // Target Google Web App Execution URL Core
+        const API_URL = "https://script.google.com/macros/s/AKfycbwycndmhVRQ-JmyAZesC5p52QjupUbyk6C8BXnVYHuMnSKMF_9bx1KtZcLwEWOiSqfOog/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
-        
         let activeSessionUser = null; 
 
-        // Registered Authorized Planners Directory (Master ADMIN Matrix Enabled)
         const PLANNER_REGISTRY = {
             "ADMIN": "TLPlanning2026",
             "ROICE": "Samal2026",
@@ -476,8 +470,19 @@
             return agingDays;
         }
 
+        // Global JSONP Callback handler to bypass CORS restrictions
+        window.handleGoogleSheetResponse = function(data) {
+            rawGoogleSheetData = data;
+            processAndRenderDashboard();
+            document.getElementById('live-time-stamp').innerText = `OAEC BROADCAST LIVE | LAST UPDATED: ${new Date().toLocaleTimeString().toUpperCase()}`;
+            
+            // Clean up old JSONP scripts from head
+            const oldScript = document.getElementById('jsonp-sync-stream');
+            if(oldScript) oldScript.remove();
+        };
+
         async function loadDashboardData() {
-            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS")) {
+            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS") || !API_URL) {
                 document.getElementById('live-time-stamp').innerText = "⚠️ SYSTEM DEMO RUN ACTIVE. BIND VALID SCRIPT URL.";
                 rawGoogleSheetData = [
                     { rowId: 2, dateCaptured: "2026-06-25", unitNo: "PL-33", location: "Tacunan, Bypass South", alert: "KOMTRAX electric source of machine was disconnected.", totalCounts: 200, planner: "JANE", plannedDate: "", action: "", status: "PENDING" },
@@ -491,10 +496,12 @@
 
             try {
                 document.getElementById('live-time-stamp').innerText = "🔄 CONNECTING TO OMEGA ASIA SHEET DATABASE ENGINE...";
-                const response = await fetch(API_URL);
-                rawGoogleSheetData = await response.json();
-                processAndRenderDashboard();
-                document.getElementById('live-time-stamp').innerText = `OAEC BROADCAST LIVE | LAST UPDATED: ${new Date().toLocaleTimeString().toUpperCase()}`;
+                
+                // Dynamic JSONP tag injection execution strategy
+                const script = document.createElement('script');
+                script.id = 'jsonp-sync-stream';
+                script.src = `${API_URL}?callback=handleGoogleSheetResponse&_ts=${Date.now()}`;
+                document.head.appendChild(script);
             } catch (err) {
                 document.getElementById('live-time-stamp').innerText = "❌ ACCESS REFUSED: VERIFY APPS SCRIPT WEB DEPLOYMENT CREDENTIALS.";
                 console.error(err);
@@ -646,7 +653,7 @@
         }
 
         async function pushRowUpdate(idsString, targetBtnId) {
-            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS")) {
+            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS") || !API_URL) {
                 alert("OFFLINE ENVIRONMENT: Log saved inside operational local array stream.");
                 processAndRenderDashboard();
                 return;
@@ -662,17 +669,20 @@
 
             try {
                 for (let currentId of rowIds) {
-                    const payload = {
-                        rowId: currentId,
-                        plannedDate: matchedRecord.plannedDate,
-                        action: matchedRecord.action,
-                        status: matchedRecord.status
-                    };
+                    // Send payloads formatted matching x-www-form-urlencoded boundaries
+                    const formPayload = new URLSearchParams();
+                    formPayload.append("rowId", currentId);
+                    formPayload.append("plannedDate", matchedRecord.plannedDate || "");
+                    formPayload.append("action", matchedRecord.action || "");
+                    formPayload.append("status", matchedRecord.status || "PENDING");
 
                     await fetch(API_URL, {
                         method: "POST",
                         mode: "no-cors", 
-                        body: JSON.stringify(payload)
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: formPayload.toString()
                     });
                 }
                 
@@ -691,14 +701,12 @@
             }
         }
 
-        /* Pure JavaScript Matrix Data Extraction Pipeline to Excel Compatible CSV Format */
         function exportTableToExcel() {
             if (!rawGoogleSheetData || rawGoogleSheetData.length === 0) {
                 alert("Export failed: No structured queue data exists to write.");
                 return;
             }
 
-            // Headers mapping the system display schema
             const headers = [
                 "Date Logged", "Unit No", "Location", "Alert Log Description", 
                 "Counts", "Criticality", "Aging Days", "Planner", 
@@ -706,9 +714,8 @@
             ];
 
             let csvRows = [];
-            csvRows.push(headers.join(",")); // Append header vector
+            csvRows.push(headers.join(",")); 
 
-            // Process internal rows while respecting active filter matrix bounds
             let consolidatedMap = new Map();
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
@@ -730,13 +737,11 @@
             displayDataArray.forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 
-                // Skip rows not matching the active queue user interface viewport filter
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
 
                 const computedCriticality = evaluateCriticality(row.alert);
                 const aging = calculateAgingDays(row.dateCaptured, row.status);
 
-                // Escaping strings carefully to prevent cell delimiter collision breakages inside Excel
                 const escapeCSV = (text) => {
                     if (!text) return '""';
                     return `"${text.toString().replace(/"/g, '""')}"`;
@@ -758,7 +763,6 @@
                 csvRows.push(rowData.join(","));
             });
 
-            // Stream construction assembly and dispatch download event
             const csvBlob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             const filterLabel = selectedPlannerFilter.toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -770,6 +774,7 @@
             document.body.removeChild(link);
         }
 
+        // Initialize dashboard stream
         loadDashboardData();
     </script>
 </body>
