@@ -73,8 +73,8 @@
         .stat-card.risk .stat-badge { background: #fef2f2; color: var(--critical); border: 1px solid #fca5a5; }
         .stat-card.volume .stat-badge { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
 
-        /* 📊 UPGRADE 3: ANALYTICS GRID PANEL STYLING */
-        .analytics-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 6px; margin-bottom: 6px; }
+        /* 📊 PROGRESSION & SHORTENED CHART GRID PANEL */
+        .analytics-grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: 6px; margin-bottom: 6px; }
         .analytics-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .analytics-header-title { font-size: 10px; font-weight: 800; color: var(--omega-navy); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         
@@ -84,14 +84,15 @@
         .progress-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--text-main); }
         .progress-stats-row { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; font-weight: 700; color: var(--text-muted); }
 
+        /* Chart Tweaks: Expanded Label Room & Balanced Shorter Bars */
         .fault-chart-list { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
-        .fault-chart-row { display: flex; align-items: center; gap: 6px; }
-        .fault-chart-label { width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 10px; color: var(--text-main); }
-        .fault-chart-bar-wrapper { flex-grow: 1; background: #f3f4f6; height: 10px; border-radius: 2px; overflow: hidden; position: relative; }
+        .fault-chart-row { display: flex; align-items: center; gap: 8px; }
+        .fault-chart-label { width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 10px; color: var(--text-main); }
+        .fault-chart-bar-wrapper { flex-grow: 1; max-width: 140px; background: #f3f4f6; height: 10px; border-radius: 2px; overflow: hidden; position: relative; }
         .fault-chart-bar-fill { background-color: var(--omega-navy); height: 100%; width: 0%; border-radius: 2px; transition: width 0.4s ease-out; }
-        .fault-chart-count { width: 25px; text-align: right; font-weight: 800; font-size: 10px; color: var(--text-main); }
+        .fault-chart-count { width: 30px; text-align: left; font-weight: 800; font-size: 10px; color: var(--text-main); }
 
-        /* 🔍 UPGRADE 1: ADVANCED CONTROLS SEARCH STRIP STYLING */
+        /* 🔍 ADVANCED SEARCH STRIP STYLING */
         .controls-panel { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .search-input-group { position: relative; display: flex; align-items: center; }
@@ -247,16 +248,16 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 70px;">Date Logged</th>
+                    <th style="width: 60px;">Date Logged</th>
                     <th style="width: 50px;">Unit No.</th>
                     <th style="width: 110px;">Location</th>
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
-                    <th style="width: 40px; text-align: center;">Counts</th>
+                    <th style="width: 45px; text-align: center;">Counts</th>
                     <th style="width: 60px; text-align: center;">Criticality</th>
-                    <th style="width: 65px; text-align: center;">Aging</th>
+                    <th style="width: 60px; text-align: center;">Aging</th>
                     <th style="width: 75px;">Planner</th>
-                    <th style="width: 100px;">Planned Repair Date</th>
-                    <th style="width: 150px;">Corrective Action Notes</th>
+                    <th style="width: 110px;">Planned Repair Date</th>
+                    <th style="width: 140px;">Corrective Action Notes</th>
                     <th style="width: 95px;">Status Workflow</th>
                     <th style="width: 55px; text-align: center;">Action</th>
                 </tr>
@@ -297,7 +298,7 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbz53dxsQQfg_4PJ0z7fjD_KtmzLkKfW41nEJVLZM8aSnnnhhdc6qS2Awn8JjfEt4M-WvQ/exec";
         
         let rawGoogleSheetData = [];
-        let consolidatedDisplayRecords = []; // Stores consolidated rows
+        let consolidatedDisplayRecords = []; 
         let selectedPlannerFilter = "ALL";
         let activeSessionUser = null; 
         let activeEditingGroup = null; 
@@ -372,7 +373,6 @@
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
             
-            // Extract distinct location tags dynamically to populate select control
             const locationSelect = document.getElementById('filter-select-location');
             const savedValue = locationSelect.value;
             locationSelect.innerHTML = '<option value="ALL">ALL SITES</option>';
@@ -410,7 +410,6 @@
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
-            // Perform underlying identical row consolidation logic mapping
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 
@@ -430,10 +429,8 @@
 
             consolidatedDisplayRecords = Array.from(consolidatedMap.values());
 
-            // 📊 UPGRADE 3 CHART ENGINE: Run metrics before visual row pruning filters apply
             renderAnalyticsChartsLayer(consolidatedDisplayRecords);
 
-            // Calculate planner statistics and leaderboards from pre-filtered lists
             consolidatedDisplayRecords.forEach((row) => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 if (row.planner) uniquePlanners.add(plannerKey);
@@ -469,21 +466,18 @@
             renderTableRowsWithFilters();
         }
 
-        // 📊 UPGRADE 3: RENDER VISUAL PROGRESSION AND LEADERBOARD DATA
         function renderAnalyticsChartsLayer(records) {
             const total = records.length;
             const cleared = records.filter(r => r.status === "DONE").length;
             const pending = total - cleared;
             const pct = total > 0 ? Math.round((cleared / total) * 100) : 0;
 
-            // Update Progress UI Elements
             document.getElementById('chart-percentage-text').innerText = `${pct}% Completed`;
             document.getElementById('progress-bar-slider').style.width = `${pct}%`;
             document.getElementById('progress-bar-text').innerText = `${cleared} / ${total} Alerts Cleared`;
             document.getElementById('analytics-cleared-count').innerText = cleared;
             document.getElementById('analytics-pending-count').innerText = pending;
 
-            // Generate Top Faults Occurrence Dictionary Array
             let faultFrequencies = {};
             records.forEach(r => {
                 if (r.status !== "DONE" && r.alert) {
@@ -494,7 +488,7 @@
 
             const sortedFaults = Object.entries(faultFrequencies)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 3); // Get top 3 recurring problem sets
+                .slice(0, 3); 
 
             const chartContainer = document.getElementById('chart-faults-container');
             if (sortedFaults.length === 0) {
@@ -519,7 +513,6 @@
             });
         }
 
-        // 🔍 UPGRADE 1: LIVE FILTER AND SEARCH MULTI-LAYER EXECUTION MATRIX
         function handleAdvancedFiltersTrigger() {
             renderTableRowsWithFilters();
         }
@@ -535,16 +528,9 @@
             consolidatedDisplayRecords.forEach((row) => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 
-                // 1. Check Primary Planner Pill Filter
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
-
-                // 2. Check Unit Search Input Box Filter
                 if (searchSearchQuery && !row.unitNo?.toUpperCase().includes(searchSearchQuery)) return;
-
-                // 3. Check Location Selected Dropdown Filter
                 if (locationSelectQuery !== "ALL" && row.location?.trim().toUpperCase() !== locationSelectQuery) return;
-
-                // 4. Check Workflow Status Selection Dropdown Filter
                 if (statusSelectQuery !== "ALL" && row.status !== statusSelectQuery) return;
 
                 const computedCriticality = (row.criticality || "LOW").toUpperCase();
@@ -590,7 +576,6 @@
             allBtn.innerText = "ALL FLEET QUEUES";
             allBtn.onclick = function() {
                 selectedPlannerFilter = "ALL";
-                // Reset styling active selection switches
                 document.querySelectorAll('#planner-filters-container button').forEach(b => b.classList.remove('active'));
                 allBtn.classList.add('active');
                 renderTableRowsWithFilters();
@@ -701,7 +686,6 @@
             consolidatedDisplayRecords.forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 
-                // Mirror the advanced filter layout exactly onto the generated report spreadsheet
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
                 if (searchSearchQuery && !row.unitNo?.toUpperCase().includes(searchSearchQuery)) return;
                 if (locationSelectQuery !== "ALL" && row.location?.trim().toUpperCase() !== locationSelectQuery) return;
