@@ -1,2 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAEC TELEMATICS ALERT</title>
+    <style>
+        :root {
+            /* Official Omega Asia Brand Identity Color Matrix */
+            --bg-main: #f4f6f9;         /* Clean, bright site background */
+            --bg-card: #ffffff;         /* Crisp white structural modules */
+            --omega-navy: #1b2e4b;      /* Core Brand Heavy-Duty Corporate Navy */
+            --omega-yellow: #f59e0b;    /* High-Visibility Brand Safety Yellow */
+            --omega-yellow-hover: #d97706;
+            
+            --text-main: #111827;       /* Deep high-contrast charcoal for prose and tables */
+            --text-muted: #4b5563;      /* Slate gray for layout sub-headers */
+            --border: #d1d5db;          /* Solid structural joint lines */
+            
+            /* High-Contrast Priority Indicators */
+            --critical: #dc2626;         /* Safety Red */
+            --warning: #ea580c;          /* Caution Orange */
+            --normal: #0284c7;           /* Operational Blue */
+            --success: #16a34a;          /* Cleared Green */
+        }
 
-asdf
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 6px;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+        /* Top Brand Header Block matching Corporate Brand Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--omega-navy);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(27, 46, 75, 0.1);
+        }
+
+        header h1 { 
+            margin: 0; 
+            font-size: 15px; 
+            font-weight: 800; 
+            color: #ffffff;
+            letter-spacing: -0.3px; 
+            text-transform: uppercase;
+        }
+        
+        header h1 span {
+            color: var(--omega-yellow);
+        }
+
+        .subtitle { 
+            color: #94a3b8; 
+            font-size: 9px; 
+            font-weight: 700; 
+            margin-top: 1px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Auth Bar Styling */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .auth-container input {
+            height: 22px;
+            padding: 2px 6px;
+            border: 1px solid #94a3b8;
+            border-radius: 3px;
+            font-size: 10px;
+            width: 100px;
+        }
+        .auth-btn {
+            background-color: var(--omega-yellow);
+            color: var(--omega-navy);
+            border: none;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 800;
+            border-radius: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .auth-btn:hover { background-color: var(--omega-yellow-hover); }
+        .user-badge {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .logout-btn {
+            background: transparent;
+            color: #fca5a5;
+            border: 1px solid #ef4444;
+            padding: 2px 6px;
+            font-size: 9px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .logout-btn:hover { background: #dc2626; color: white; }
+
+        /* Ultra-Compact KPI Section */
+        .header-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border-radius: 4px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--omega-navy); 
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .stat-card.risk { border-top: 3px solid var(--critical); }
+        .stat-card.volume { border-top: 3px solid var(--warning); }
+        .stat-card.pending { border-top: 3px solid var(--omega-yellow); }
+
+        .stat-title { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
+        .stat-leader { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
+        .stat-sub { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 1px; }
+        
+        .stat-badge { 
+            position: absolute; 
+            top: 8px; 
+            right: 8px; 
+            font-size: 8px; 
+            font-weight: 800; 
+            padding: 1px 4px; 
+            border-radius: 2px; 
+            text-transform: uppercase;
+        }
+        .stat-card.risk .stat-badge { background: #fef2f2; color: var(--critical); border: 1px solid #fca5a5; }
+        .stat-card.volume .stat-badge { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
+
+        /* Queue / Planner Filter Deck */
+        .controls-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            flex-wrap: wrap;
+        }
+
+        .filter-label { font-size: 10px; color: var(--omega-navy); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        button.filter-pill {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        button.filter-pill:hover {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        button.filter-pill.active {
+            background-color: var(--omega-navy);
+            color: #ffffff;
+            border-color: var(--omega-navy);
+        }
+
+        /* High-Visibility Export Button Alignment Style */
+        .export-btn {
+            background-color: #16a34a !important;
+            color: white !important;
+            border-color: #15803d !important;
+            margin-left: auto; /* Pushes the export button cleanly to the far right */
+        }
+        .export-btn:hover {
+            background-color: #15803d !important;
+        }
+
+        /* High-Density Engine Grid Architecture */
+        .table-wrapper {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
+        
+        /* Deep Omega Navy Header Matrix */
+        th { 
+            background-color: var(--omega-navy); 
+            padding: 6px 8px; 
+            color: #ffffff; 
+            font-size: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            border-bottom: 2px solid #111827; 
+            letter-spacing: 0.3px; 
+        }
+        
+        td { 
+            padding: 4px 8px; 
+            border-bottom: 1px solid #e5e7eb; 
+            font-size: 11px; 
+            font-weight: 600;
+            vertical-align: middle; 
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main); 
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background-color: #f9fafb; } 
+        tr:hover td { background-color: #f3f4f6; }
+
+        /* Compact Controls Form Factor */
+        input[type="date"], input[type="text"], select {
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            box-sizing: border-box;
+            width: 100%;
+            height: 22px;
+        }
+        
+        input:focus, select:focus { border-color: var(--omega-navy); outline: none; }
+        
+        /* Disabled input visual state for read-only rows */
+        input:disabled, select:disabled {
+            background-color: #f3f4f6 !important;
+            color: #9ca3af !important;
+            border-color: #e5e7eb !important;
+            cursor: not-allowed;
+        }
+
+        /* Categorized Fleet Badging */
+        .crit-badge { padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 800; text-transform: uppercase; display: inline-block; text-align: center; width: 45px; }
+        .crit-badge.high { background-color: #fee2e2; color: var(--critical); border: 1px solid #fca5a5; }
+        .crit-badge.medium { background-color: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
+        .crit-badge.low { background-color: #e0f2fe; color: var(--normal); border: 1px solid #bae6fd; }
+
+        .aging-tag { font-weight: 800; font-size: 11px; }
+        .aging-tag.stagnant { color: var(--critical); }
+        .aging-tag.warning { color: var(--warning); }
+        .aging-tag.fresh { color: var(--text-muted); }
+
+        .status-select.pending { color: var(--warning); background-color: #fff7ed; border-color: #fdba74; }
+        .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; }
+
+        /* Action Save Matrix Controls */
+        .save-row-btn {
+            background-color: #ffffff;
+            color: var(--omega-navy);
+            border: 1px solid var(--omega-navy);
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            height: 22px;
+            box-sizing: border-box;
+            transition: all 0.1s ease;
+        }
+        .save-row-btn:hover { 
+            background-color: var(--omega-navy); 
+            color: #ffffff; 
+        }
+        .save-row-btn:disabled {
+            background-color: #e5e7eb !important;
+            color: #9ca3af !important;
+            border-color: #d1d5db !important;
+            cursor: not-allowed;
+        }
+        
+        .sync-btn {
+            background-color: var(--omega-yellow);
+            color: var(--omega-navy);
+            border: 1px solid var(--omega-yellow);
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            font-size: 10px;
+        }
+        .sync-btn:hover {
+            background-color: var(--omega-yellow-hover);
+            border-color: var(--omega-yellow-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>OAEC <span>— TELEMATICS ALERT</span></h1>
+            <div class="subtitle" id="live-time-stamp">Loading Telemetry Matrix...</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div id="auth-portal-block" class="auth-container">
+                <input type="text" id="auth-username" placeholder="PLANNER NAME">
+                <input type="password" id="auth-password" placeholder="PASSWORD">
+                <button class="auth-btn" onclick="attemptSystemLogin()">Login</button>
+            </div>
+            <button class="filter-pill sync-btn" onclick="loadDashboardData()">🔄 Sync Sheet</button>
+        </div>
+    </header>
+
+    <div class="header-stats-grid">
+        <div class="stat-card risk">
+            <div class="stat-badge">Risk Leader</div>
+            <div class="stat-title">Most Unattended High Alerts</div>
+            <div class="stat-leader" id="leader-risk">--</div>
+            <div class="stat-sub" id="leader-risk-sub">0 Pending Tickets</div>
+        </div>
+        <div class="stat-card volume">
+            <div class="stat-badge">Workload Leader</div>
+            <div class="stat-title">Highest Unattended Counts</div>
+            <div class="stat-leader" id="leader-volume">--</div>
+            <div class="stat-sub" id="leader-volume-sub">0 Raw Alerts</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="stat-title">Active Fleet Backlog</div>
+            <div class="stat-leader" id="total-backlog-counter">0</div>
+            <div class="stat-sub">Total Unresolved Equipment Alerts</div>
+        </div>
+    </div>
+
+    <div class="controls-panel">
+        <span class="filter-label">Filter Queue Log:</span>
+        <div id="planner-filters-container" style="display:flex; gap:4px; align-items: center; flex-grow: 1;"></div>
+        <button class="filter-pill export-btn" onclick="exportTableToExcel()">📤 Export to Excel</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 75px;">Date Logged</th>
+                    <th style="width: 55px;">Unit No.</th>
+                    <th style="width: 120px;">Location</th>
+                    <th style="width: auto; white-space: normal;">Alert Log Description</th>
+                    <th style="width: 45px; text-align: center;">Counts</th>
+                    <th style="width: 60px; text-align: center;">Criticality</th>
+                    <th style="width: 75px; text-align: center;">Aging</th>
+                    <th style="width: 75px;">Planner</th>
+                    <th style="width: 110px;">Planned Repair Date</th>
+                    <th style="width: 160px;">Corrective Action Notes</th>
+                    <th style="width: 95px;">Status Workflow</th>
+                    <th style="width: 45px; text-align: center;">Sync</th>
+                </tr>
+            </thead>
+            <tbody id="master-table-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Paste your exact macro deployment endpoint URL down below inside the string block:
+        const API_URL = "https://script.google.com/macros/s/AKfycbwuoFWmnu-6F0X5U1n7ELNJhco3WzVUbiE8S6CJw35sgpf4VoJqNj9_SjMJ_a0y5Wg5/exec";
+        
+        let rawGoogleSheetData = [];
+        let selectedPlannerFilter = "ALL";
+        let activeSessionUser = null; 
+
+        // Registered Authorized Planners Directory (Master ADMIN Matrix Enabled)
+        const PLANNER_REGISTRY = {
+            "ADMIN": "TLPlanning2026",
+            "ROICE": "Samal2026",
+            "GLENBERTH": "Region11",
+            "JANE": "Region10",
+            "LEO": "GEMVillage",
+            "VINCENT": "Region13"
+        };
+
+        document.getElementById('live-time-stamp').innerText = `SYSTEM DIAGNOSTICS: LINKED | ${new Date().toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}`;
+
+        function attemptSystemLogin() {
+            const userIn = document.getElementById('auth-username').value.trim().toUpperCase();
+            const passIn = document.getElementById('auth-password').value;
+
+            if (PLANNER_REGISTRY[userIn] && PLANNER_REGISTRY[userIn] === passIn) {
+                activeSessionUser = userIn;
+                renderAuthenticationBar();
+                processAndRenderDashboard();
+            } else {
+                alert("ACCESS DENIED: Invalid planner credentials or unmapped key.");
+            }
+        }
+
+        function terminateSession() {
+            activeSessionUser = null;
+            renderAuthenticationBar();
+            processAndRenderDashboard();
+        }
+
+        function renderAuthenticationBar() {
+            const container = document.getElementById('auth-portal-block');
+            if(activeSessionUser) {
+                container.innerHTML = `
+                    <span class="user-badge">${activeSessionUser === 'ADMIN' ? '👑 MASTER ADMIN' : `🟢 PLANNER: ${activeSessionUser}`}</span>
+                    <button class="logout-btn" onclick="terminateSession()">Logout</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <input type="text" id="auth-username" placeholder="PLANNER NAME">
+                    <input type="password" id="auth-password" placeholder="PASSWORD">
+                    <button class="auth-btn" onclick="attemptSystemLogin()">Login</button>
+                `;
+            }
+        }
+
+        function evaluateCriticality(alertText) {
+            if (!alertText) return "LOW";
+            const txt = alertText.toLowerCase();
+            if (txt.includes("disconnected") || txt.includes("water separator") || txt.includes("oil pressure") || txt.includes("temperature")) {
+                return "HIGH";
+            } else if (txt.includes("clogging") || txt.includes("level") || txt.includes("voltage") || txt.includes("battery")) {
+                return "MEDIUM";
+            }
+            return "LOW";
+        }
+
+        function calculateAgingDays(dateString, status) {
+            if (status === "DONE" || !dateString) return 0;
+            const start = new Date(dateString);
+            const end = new Date();
+            start.setHours(0,0,0,0);
+            end.setHours(0,0,0,0);
+            if (start >= end) return 0;
+
+            let agingDays = 0;
+            let current = new Date(start);
+            current.setDate(current.getDate() + 1);
+
+            while (current <= end) {
+                if (current.getDay() !== 0) { 
+                    agingDays++;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            return agingDays;
+        }
+
+        async function loadDashboardData() {
+            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS")) {
+                document.getElementById('live-time-stamp').innerText = "⚠️ SYSTEM DEMO RUN ACTIVE. BIND VALID SCRIPT URL.";
+                rawGoogleSheetData = [
+                    { rowId: 2, dateCaptured: "2026-06-25", unitNo: "PL-33", location: "Tacunan, Bypass South", alert: "KOMTRAX electric source of machine was disconnected.", totalCounts: 200, planner: "JANE", plannedDate: "", action: "", status: "PENDING" },
+                    { rowId: 3, dateCaptured: "2026-06-26", unitNo: "PL-33", location: "Tacunan, Bypass South", alert: "KOMTRAX electric source of machine was disconnected.", totalCounts: 64, planner: "JANE", plannedDate: "", action: "", status: "PENDING" },
+                    { rowId: 4, dateCaptured: "2026-06-28", unitNo: "BH-134", location: "Banlag", alert: "Caution info: (Water separator monitor)", totalCounts: 12, planner: "LEO", plannedDate: "", action: "", status: "PENDING" },
+                    { rowId: 5, dateCaptured: "2026-07-01", unitNo: "BH-190", location: "Caraga", alert: "Maintenance notice.(F/Tank Breather)", totalCounts: 1, planner: "GLENBERTH", plannedDate: "2026-07-04", action: "Filter component ordered.", status: "PENDING" }
+                ];
+                processAndRenderDashboard();
+                return;
+            }
+
+            try {
+                document.getElementById('live-time-stamp').innerText = "🔄 CONNECTING TO OMEGA ASIA SHEET DATABASE ENGINE...";
+                const response = await fetch(API_URL);
+                rawGoogleSheetData = await response.json();
+                processAndRenderDashboard();
+                document.getElementById('live-time-stamp').innerText = `OAEC BROADCAST LIVE | LAST UPDATED: ${new Date().toLocaleTimeString().toUpperCase()}`;
+            } catch (err) {
+                document.getElementById('live-time-stamp').innerText = "❌ ACCESS REFUSED: VERIFY APPS SCRIPT WEB DEPLOYMENT CREDENTIALS.";
+                console.error(err);
+            }
+        }
+
+        function processAndRenderDashboard() {
+            const tbody = document.getElementById('master-table-body');
+            tbody.innerHTML = '';
+
+            let plannerStats = {};
+            let unresolvedCount = 0;
+            let uniquePlanners = new Set();
+            let consolidatedMap = new Map();
+
+            rawGoogleSheetData.forEach((row) => {
+                const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
+                
+                if (!consolidatedMap.has(uniqueKey)) {
+                    consolidatedMap.set(uniqueKey, { ...row, totalCounts: parseInt(row.totalCounts || 1), alliedRowIds: [row.rowId] });
+                } else {
+                    let existing = consolidatedMap.get(uniqueKey);
+                    existing.totalCounts += parseInt(row.totalCounts || 1);
+                    if (new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
+                        existing.dateCaptured = row.dateCaptured;
+                    }
+                    existing.alliedRowIds.push(row.rowId);
+                    if (!existing.action && row.action) existing.action = row.action;
+                    if (!existing.plannedDate && row.plannedDate) existing.plannedDate = row.plannedDate;
+                }
+            });
+
+            const displayDataArray = Array.from(consolidatedMap.values());
+
+            displayDataArray.forEach((row, index) => {
+                const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                if (row.planner) uniquePlanners.add(plannerKey);
+
+                const computedCriticality = evaluateCriticality(row.alert);
+                const aging = calculateAgingDays(row.dateCaptured, row.status);
+
+                if (row.status !== "DONE") {
+                    unresolvedCount++;
+                    if (!plannerStats[plannerKey]) {
+                        plannerStats[plannerKey] = { rawVolume: 0, highCount: 0 };
+                    }
+                    plannerStats[plannerKey].rawVolume += row.totalCounts;
+                    if (computedCriticality === "HIGH") {
+                        plannerStats[plannerKey].highCount += 1;
+                    }
+                }
+
+                if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
+
+                const isRowEditable = (activeSessionUser === "ADMIN") || (activeSessionUser !== null && activeSessionUser === plannerKey);
+                const disableFlag = isRowEditable ? "" : "disabled";
+
+                const tr = document.createElement('tr');
+                let agingClass = "fresh";
+                if (aging > 5) agingClass = "stagnant";
+                else if (aging >= 3) agingClass = "warning";
+
+                const linkedIdsString = row.alliedRowIds.join(',');
+
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted); font-weight: 700; font-size: 10px;">${row.dateCaptured || 'N/A'}</td>
+                    <td style="font-weight: 800; color: #0284c7; font-size: 11px;">${row.unitNo || 'N/A'}</td>
+                    <td style="font-weight: 600;" title="${row.location}">${row.location || 'N/A'}</td>
+                    <td style="white-space: normal; line-height: 1.3; font-weight: 600; overflow: visible; text-overflow: clip;">${row.alert || 'N/A'}</td>
+                    <td style="text-align: center; font-weight: 800; font-size: 11px; color: #000;">${row.totalCounts}</td>
+                    <td style="text-align: center;"><span class="crit-badge ${computedCriticality.toLowerCase()}">${computedCriticality}</span></td>
+                    <td style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
+                    <td style="font-weight: 700; color: var(--omega-navy);">${plannerKey}</td>
+                    
+                    <td><input type="date" ${disableFlag} value="${row.plannedDate || ''}" onchange="updateLocalState('${linkedIdsString}', 'plannedDate', this.value)"></td>
+                    <td><input type="text" ${disableFlag} value="${row.action || ''}" placeholder="Notes..." onchange="updateLocalState('${linkedIdsString}', 'action', this.value)"></td>
+                    <td>
+                        <select class="status-select ${row.status.toLowerCase()}" ${disableFlag} onchange="updateStatusAndSync('${linkedIdsString}', this)">
+                            <option value="PENDING" ${row.status === 'PENDING' ? 'selected' : ''}>⏳ PENDING</option>
+                            <option value="DONE" ${row.status === 'DONE' ? 'selected' : ''}>✅ DONE</option>
+                        </select>
+                    </td>
+                    <td style="text-align: center;"><button id="btn-${row.alliedRowIds[0]}" class="save-row-btn" ${disableFlag} onclick="pushRowUpdate('${linkedIdsString}', '${row.alliedRowIds[0]}')">Save</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-backlog-counter').innerText = unresolvedCount;
+
+            let topRiskName = "NONE", topRiskVal = 0;
+            let topVolName = "NONE", topVolVal = 0;
+
+            for (let name in plannerStats) {
+                if (plannerStats[name].highCount > topRiskVal) { topRiskVal = plannerStats[name].highCount; topRiskName = name; }
+                if (plannerStats[name].rawVolume > topVolVal) { topVolVal = plannerStats[name].rawVolume; topVolName = name; }
+            }
+
+            document.getElementById('leader-risk').innerText = topRiskName;
+            document.getElementById('leader-risk-sub').innerText = `${topRiskVal} CRITICAL ACTIONS`;
+            document.getElementById('leader-volume').innerText = topVolName;
+            document.getElementById('leader-volume-sub').innerText = `${topVolVal} FAULT OCCURRENCES`;
+
+            populatePlannerFilters(Array.from(uniquePlanners));
+        }
+
+        function populatePlannerFilters(plannerList) {
+            const container = document.getElementById('planner-filters-container');
+            container.innerHTML = ''; 
+
+            const allBtn = document.createElement('button');
+            allBtn.className = `filter-pill ${selectedPlannerFilter === "ALL" ? "active" : ""}`;
+            allBtn.innerText = "ALL FLEET QUEUES";
+            allBtn.onclick = function() {
+                selectedPlannerFilter = "ALL";
+                processAndRenderDashboard();
+            };
+            container.appendChild(allBtn);
+
+            plannerList.sort().forEach(planner => {
+                const btn = document.createElement('button');
+                btn.className = `filter-pill ${selectedPlannerFilter === planner ? "active" : ""}`;
+                btn.innerText = planner;
+                btn.onclick = function() {
+                    selectedPlannerFilter = planner;
+                    processAndRenderDashboard();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function updateLocalState(idsString, field, val) {
+            const rowIds = idsString.split(',').map(Number);
+            rawGoogleSheetData.forEach(row => {
+                if (rowIds.includes(row.rowId)) {
+                    row[field] = val;
+                }
+            });
+        }
+
+        function updateStatusAndSync(idsString, element) {
+            const rowIds = idsString.split(',').map(Number);
+            rawGoogleSheetData.forEach(row => {
+                if (rowIds.includes(row.rowId)) {
+                    row.status = element.value;
+                }
+            });
+            element.className = `status-select ${element.value.toLowerCase()}`;
+            pushRowUpdate(idsString, rowIds[0]);
+        }
+
+        async function pushRowUpdate(idsString, targetBtnId) {
+            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS")) {
+                alert("OFFLINE ENVIRONMENT: Log saved inside operational local array stream.");
+                processAndRenderDashboard();
+                return;
+            }
+
+            const rowIds = idsString.split(',').map(Number);
+            const matchedRecord = rawGoogleSheetData.find(r => r.rowId === rowIds[0]);
+            
+            const btn = document.getElementById(`btn-${targetBtnId}`);
+            btn.innerText = "SAVING...";
+            btn.disabled = true; // Protects network socket stream from collision double clicks
+            btn.style.backgroundColor = "var(--omega-navy)";
+            btn.style.color = "white";
+
+            try {
+                // Iteratively write modifications over matching row targets cleanly 
+                for (let currentId of rowIds) {
+                    const payload = {
+                        rowId: currentId,
+                        plannedDate: matchedRecord.plannedDate,
+                        action: matchedRecord.action,
+                        status: matchedRecord.status
+                    };
+
+                    const response = await fetch(API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "text/plain;charset=utf-8" // Protects Web App from pre-flight CORS blocks
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const resultText = await response.text();
+                    if (resultText.includes("ERROR")) {
+                        throw new Error(resultText);
+                    }
+                }
+                
+                btn.innerText = "✔ LINKED";
+                btn.style.backgroundColor = "var(--success)";
+                setTimeout(() => {
+                    btn.style.backgroundColor = "";
+                    btn.style.color = "";
+                    btn.innerText = "Save";
+                    btn.disabled = false;
+                    loadDashboardData(); // Refreshes UI strictly upon verified execution receipt
+                }, 1200);
+            } catch (err) {
+                console.error("Network Exception Logged:", err);
+                alert("TRANSMISSION FAULT: " + err.message);
+                btn.innerText = "FAIL";
+                btn.disabled = false;
+                btn.style.backgroundColor = "var(--critical)";
+            }
+        }
+
+        /* Pure JavaScript Matrix Data Extraction Pipeline to Excel Compatible CSV Format */
+        function exportTableToExcel() {
+            if (!rawGoogleSheetData || rawGoogleSheetData.length === 0) {
+                alert("Export failed: No structured queue data exists to write.");
+                return;
+            }
+
+            const headers = [
+                "Date Logged", "Unit No", "Location", "Alert Log Description", 
+                "Counts", "Criticality", "Aging Days", "Planner", 
+                "Planned Repair Date", "Corrective Action Notes", "Status"
+            ];
+
+            let csvRows = [];
+            csvRows.push(headers.join(",")); 
+
+            let consolidatedMap = new Map();
+            rawGoogleSheetData.forEach((row) => {
+                const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
+                if (!consolidatedMap.has(uniqueKey)) {
+                    consolidatedMap.set(uniqueKey, { ...row, totalCounts: parseInt(row.totalCounts || 1) });
+                } else {
+                    let existing = consolidatedMap.get(uniqueKey);
+                    existing.totalCounts += parseInt(row.totalCounts || 1);
+                    if (new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
+                        existing.dateCaptured = row.dateCaptured;
+                    }
+                    if (!existing.action && row.action) existing.action = row.action;
+                    if (!existing.plannedDate && row.plannedDate) existing.plannedDate = row.plannedDate;
+                }
+            });
+
+            const displayDataArray = Array.from(consolidatedMap.values());
+
+            displayDataArray.forEach(row => {
+                const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
+
+                const computedCriticality = evaluateCriticality(row.alert);
+                const aging = calculateAgingDays(row.dateCaptured, row.status);
+
+                const escapeCSV = (text) => {
+                    if (!text) return '""';
+                    return `"${text.toString().replace(/"/g, '""')}"`;
+                };
+
+                const rowData = [
+                    escapeCSV(row.dateCaptured),
+                    escapeCSV(row.unitNo),
+                    escapeCSV(row.location),
+                    escapeCSV(row.alert),
+                    row.totalCounts,
+                    escapeCSV(computedCriticality),
+                    row.status === 'DONE' ? '"RESOLVED"' : `"${aging} Days"`,
+                    escapeCSV(plannerKey),
+                    escapeCSV(row.plannedDate),
+                    escapeCSV(row.action),
+                    escapeCSV(row.status)
+                ];
+                csvRows.push(rowData.join(","));
+            });
+
+            const csvBlob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            const filterLabel = selectedPlannerFilter.toLowerCase().replace(/[^a-z0-9]/g, "_");
+            
+            link.href = URL.createObjectURL(csvBlob);
+            link.setAttribute("download", `oaec_telematics_report_${filterLabel}_2026.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        loadDashboardData();
+    </script>
+</body>
+</html>
