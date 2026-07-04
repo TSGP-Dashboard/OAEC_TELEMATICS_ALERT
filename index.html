@@ -6,22 +6,18 @@
     <title>OAEC TELEMATICS ALERT</title>
     <style>
         :root {
-            /* Official Omega Asia Brand Identity Color Matrix */
-            --bg-main: #f4f6f9;         /* Clean, bright site background */
-            --bg-card: #ffffff;         /* Crisp white structural modules */
-            --omega-navy: #1b2e4b;      /* Core Brand Heavy-Duty Corporate Navy */
-            --omega-yellow: #f59e0b;    /* High-Visibility Brand Safety Yellow */
+            --bg-main: #f4f6f9;         
+            --bg-card: #ffffff;         
+            --omega-navy: #1b2e4b;      
+            --omega-yellow: #f59e0b;    
             --omega-yellow-hover: #d97706;
-            
-            --text-main: #111827;       /* Deep high-contrast charcoal for prose and tables */
-            --text-muted: #4b5563;      /* Slate gray for layout sub-headers */
-            --border: #d1d5db;          /* Solid structural joint lines */
-            
-            /* High-Contrast Priority Indicators */
-            --critical: #dc2626;         /* Safety Red */
-            --warning: #ea580c;          /* Caution Orange */
-            --normal: #0284c7;           /* Operational Blue */
-            --success: #16a34a;          /* Cleared Green */
+            --text-main: #111827;       
+            --text-muted: #4b5563;      
+            --border: #d1d5db;          
+            --critical: #dc2626;         
+            --warning: #ea580c;          
+            --normal: #0284c7;           
+            --success: #16a34a;          
         }
 
         body {
@@ -34,7 +30,6 @@
             line-height: 1.2;
         }
 
-        /* Top Brand Header Block matching Corporate Brand Styling */
         header {
             display: flex;
             justify-content: space-between;
@@ -55,215 +50,49 @@
             text-transform: uppercase;
         }
         
-        header h1 span {
-            color: var(--omega-yellow);
-        }
+        header h1 span { color: var(--omega-yellow); }
+        .subtitle { color: #94a3b8; font-size: 9px; font-weight: 700; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .subtitle { 
-            color: #94a3b8; 
-            font-size: 9px; 
-            font-weight: 700; 
-            margin-top: 1px; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Auth Bar Styling */
-        .auth-container {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .auth-container input {
-            height: 22px;
-            padding: 2px 6px;
-            border: 1px solid #94a3b8;
-            border-radius: 3px;
-            font-size: 10px;
-            width: 100px;
-        }
-        .auth-btn {
-            background-color: var(--omega-yellow);
-            color: var(--omega-navy);
-            border: none;
-            padding: 3px 8px;
-            font-size: 10px;
-            font-weight: 800;
-            border-radius: 3px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+        .auth-container { display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 4px; }
+        .auth-container input { height: 22px; padding: 2px 6px; border: 1px solid #94a3b8; border-radius: 3px; font-size: 10px; width: 100px; }
+        .auth-btn { background-color: var(--omega-yellow); color: var(--omega-navy); border: none; padding: 3px 8px; font-size: 10px; font-weight: 800; border-radius: 3px; cursor: pointer; text-transform: uppercase; }
         .auth-btn:hover { background-color: var(--omega-yellow-hover); }
-        .user-badge {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .logout-btn {
-            background: transparent;
-            color: #fca5a5;
-            border: 1px solid #ef4444;
-            padding: 2px 6px;
-            font-size: 9px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: 700;
-        }
+        .user-badge { color: #ffffff; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logout-btn { background: transparent; color: #fca5a5; border: 1px solid #ef4444; padding: 2px 6px; font-size: 9px; border-radius: 3px; cursor: pointer; font-weight: 700; }
         .logout-btn:hover { background: #dc2626; color: white; }
 
-        /* Ultra-Compact KPI Section */
-        .header-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .stat-card {
-            background-color: var(--bg-card);
-            border-radius: 4px;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-top: 3px solid var(--omega-navy); 
-            position: relative;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
+        .header-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px; margin-bottom: 6px; }
+        .stat-card { background-color: var(--bg-card); border-radius: 4px; padding: 8px 12px; border: 1px solid var(--border); border-top: 3px solid var(--omega-navy); position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .stat-card.risk { border-top: 3px solid var(--critical); }
         .stat-card.volume { border-top: 3px solid var(--warning); }
         .stat-card.pending { border-top: 3px solid var(--omega-yellow); }
-
         .stat-title { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
         .stat-leader { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
         .stat-sub { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 1px; }
-        
-        .stat-badge { 
-            position: absolute; 
-            top: 8px; 
-            right: 8px; 
-            font-size: 8px; 
-            font-weight: 800; 
-            padding: 1px 4px; 
-            border-radius: 2px; 
-            text-transform: uppercase;
-        }
+        .stat-badge { position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 2px; text-transform: uppercase; }
         .stat-card.risk .stat-badge { background: #fef2f2; color: var(--critical); border: 1px solid #fca5a5; }
         .stat-card.volume .stat-badge { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
 
-        /* Queue / Planner Filter Deck */
-        .controls-panel {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            flex-wrap: wrap;
-        }
-
+        .controls-panel { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; gap: 10px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02); flex-wrap: wrap; }
         .filter-label { font-size: 10px; color: var(--omega-navy); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        button.filter-pill {
-            background-color: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-            padding: 3px 10px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
+        button.filter-pill { background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        button.filter-pill:hover { background-color: #e5e7eb; border-color: #9ca3af; }
+        button.filter-pill.active { background-color: var(--omega-navy); color: #ffffff; border-color: var(--omega-navy); }
+        .export-btn { background-color: #16a34a !important; color: white !important; border-color: #15803d !important; margin-left: auto; }
+        .export-btn:hover { background-color: #15803d !important; }
 
-        button.filter-pill:hover {
-            background-color: #e5e7eb;
-            border-color: #9ca3af;
-        }
-
-        button.filter-pill.active {
-            background-color: var(--omega-navy);
-            color: #ffffff;
-            border-color: var(--omega-navy);
-        }
-
-        /* High-Visibility Export Button Alignment Style */
-        .export-btn {
-            background-color: #16a34a !important;
-            color: white !important;
-            border-color: #15803d !important;
-            margin-left: auto; 
-        }
-        .export-btn:hover {
-            background-color: #15803d !important;
-        }
-
-        /* High-Density Engine Grid Architecture */
-        .table-wrapper {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow-x: auto;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
+        .table-wrapper { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
-        
-        th { 
-            background-color: var(--omega-navy); 
-            padding: 6px 8px; 
-            color: #ffffff; 
-            font-size: 10px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            border-bottom: 2px solid #111827; 
-            letter-spacing: 0.3px; 
-        }
-        
-        td { 
-            padding: 4px 8px; 
-            border-bottom: 1px solid #e5e7eb; 
-            font-size: 11px; 
-            font-weight: 600;
-            vertical-align: middle; 
-            white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--text-main); 
-        }
-        
+        th { background-color: var(--omega-navy); padding: 6px 8px; color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #111827; letter-spacing: 0.3px; }
+        td { padding: 4px 8px; border-bottom: 1px solid #e5e7eb; font-size: 11px; font-weight: 600; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) td { background-color: #f9fafb; } 
         tr:hover td { background-color: #f3f4f6; }
 
-        input[type="date"], input[type="text"], select {
-            background-color: #ffffff;
-            color: var(--text-main);
-            border: 1px solid #cbd5e1;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: 600;
-            box-sizing: border-box;
-            width: 100%;
-            height: 22px;
-        }
-        
+        input[type="date"], input[type="text"], select { background-color: #ffffff; color: var(--text-main); border: 1px solid #cbd5e1; padding: 2px 4px; border-radius: 3px; font-size: 11px; font-weight: 600; box-sizing: border-box; width: 100%; height: 22px; }
         input:focus, select:focus { border-color: var(--omega-navy); outline: none; }
-        
-        input:disabled, select:disabled {
-            background-color: #f3f4f6 !important;
-            color: #9ca3af !important;
-            border-color: #e5e7eb !important;
-            cursor: not-allowed;
-        }
+        input:disabled, select:disabled { background-color: #f3f4f6 !important; color: #9ca3af !important; border-color: #e5e7eb !important; cursor: not-allowed; }
 
         .crit-badge { padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 800; text-transform: uppercase; display: inline-block; text-align: center; width: 45px; }
         .crit-badge.high { background-color: #fee2e2; color: var(--critical); border: 1px solid #fca5a5; }
@@ -278,44 +107,11 @@
         .status-select.pending { color: var(--warning); background-color: #fff7ed; border-color: #fdba74; }
         .status-select.done { color: var(--success); background-color: #f0fdf4; border-color: #86efac; }
 
-        .save-row-btn {
-            background-color: #ffffff;
-            color: var(--omega-navy);
-            border: 1px solid var(--omega-navy);
-            padding: 2px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            height: 22px;
-            box-sizing: border-box;
-            transition: all 0.1s ease;
-        }
-        .save-row-btn:hover { 
-            background-color: var(--omega-navy); 
-            color: #ffffff; 
-        }
-        .save-row-btn:disabled {
-            background-color: #e5e7eb !important;
-            color: #9ca3af !important;
-            border-color: #d1d5db !important;
-            cursor: not-allowed;
-        }
-        
-        .sync-btn {
-            background-color: var(--omega-yellow);
-            color: var(--omega-navy);
-            border: 1px solid var(--omega-yellow);
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            font-size: 10px;
-        }
-        .sync-btn:hover {
-            background-color: var(--omega-yellow-hover);
-            border-color: var(--omega-yellow-hover);
-        }
+        .save-row-btn { background-color: #ffffff; color: var(--omega-navy); border: 1px solid var(--omega-navy); padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; height: 22px; box-sizing: border-box; transition: all 0.1s ease; }
+        .save-row-btn:hover { background-color: var(--omega-navy); color: #ffffff; }
+        .save-row-btn:disabled { background-color: #e5e7eb !important; color: #9ca3af !important; border-color: #d1d5db !important; cursor: not-allowed; }
+        .sync-btn { background-color: var(--omega-yellow); color: var(--omega-navy); border: 1px solid var(--omega-yellow); font-weight: 800; text-transform: uppercase; padding: 3px 10px; font-size: 10px; }
+        .sync-btn:hover { background-color: var(--omega-yellow-hover); border-color: var(--omega-yellow-hover); }
     </style>
 </head>
 <body>
@@ -371,7 +167,7 @@
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
                     <th style="width: 45px; text-align: center;">Counts</th>
                     <th style="width: 60px; text-align: center;">Criticality</th>
-                    <th style="width: 75px; text-align: center;">Aging (Excl Sun)</th>
+                    <th style="width: 75px; text-align: center;">Aging</th>
                     <th style="width: 75px;">Planner</th>
                     <th style="width: 110px;">Planned Repair Date</th>
                     <th style="width: 160px;">Corrective Action Notes</th>
@@ -379,13 +175,12 @@
                     <th style="width: 45px; text-align: center;">Sync</th>
                 </tr>
             </thead>
-            <tbody id="master-table-body">
-            </tbody>
+            <tbody id="master-table-body"></tbody>
         </table>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxFe0e69EIVNE9ZEl52FORxcEKDFaCCXIQrgX4-VhcIKMgZpnSTM7r-D-XYucjitEAFlw/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbwwaY7hc3n7GKPt-a8DlPg5BbH9eDBV4R6i3-075wZqlHho3yoXB9rlI2S5wYLRBFPEig/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
@@ -437,24 +232,13 @@
             }
         }
 
-        function evaluateCriticality(alertText) {
-            if (!alertText) return "LOW";
-            const txt = alertText.toLowerCase();
-            if (txt.includes("disconnected") || txt.includes("water separator") || txt.includes("oil pressure") || txt.includes("temperature")) {
-                return "HIGH";
-            } else if (txt.includes("clogging") || txt.includes("level") || txt.includes("voltage") || txt.includes("battery")) {
-                return "MEDIUM";
-            }
-            return "LOW";
-        }
-
         function calculateAgingDays(dateString, status) {
             if (status === "DONE" || !dateString) return 0;
             const start = new Date(dateString);
             const end = new Date();
             start.setHours(0,0,0,0);
             end.setHours(0,0,0,0);
-            if (start >= end) return 0;
+            if (isNaN(start.getTime()) || start >= end) return 0;
 
             let agingDays = 0;
             let current = new Date(start);
@@ -469,7 +253,7 @@
             return agingDays;
         }
 
-        // Global JSONP stream target callback handler to bypass CORS layout traps
+        // Global JSONP dynamic callback handling to bypass script container cross-origin blockades
         window.handleGoogleSheetResponse = function(data) {
             rawGoogleSheetData = data;
             processAndRenderDashboard();
@@ -480,22 +264,9 @@
         };
 
         async function loadDashboardData() {
-            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS") || !API_URL) {
-                document.getElementById('live-time-stamp').innerText = "⚠️ SYSTEM DEMO RUN ACTIVE. BIND VALID SCRIPT URL.";
-                rawGoogleSheetData = [
-                    { rowId: 2, dateCaptured: "2026-06-25", unitNo: "PL-33", location: "Tacunan, Bypass South", alert: "KOMTRAX electric source of machine was disconnected.", totalCounts: 200, planner: "JANE", plannedDate: "", action: "", status: "PENDING" },
-                    { rowId: 3, dateCaptured: "2026-06-26", unitNo: "PL-33", location: "Tacunan, Bypass South", alert: "KOMTRAX electric source of machine was disconnected.", totalCounts: 64, planner: "JANE", plannedDate: "", action: "", status: "PENDING" },
-                    { rowId: 4, dateCaptured: "2026-06-28", unitNo: "BH-134", location: "Banlag", alert: "Caution info: (Water separator monitor)", totalCounts: 12, planner: "LEO", plannedDate: "", action: "", status: "PENDING" },
-                    { rowId: 5, dateCaptured: "2026-07-01", unitNo: "BH-190", location: "Caraga", alert: "Maintenance notice.(F/Tank Breather)", totalCounts: 1, planner: "GLENBERTH", plannedDate: "2026-07-04", action: "Filter component ordered.", status: "PENDING" }
-                ];
-                processAndRenderDashboard();
-                return;
-            }
-
             try {
                 document.getElementById('live-time-stamp').innerText = "🔄 CONNECTING TO OMEGA ASIA SHEET DATABASE ENGINE...";
                 
-                // Construct dynamic script tag for JSONP compilation
                 const script = document.createElement('script');
                 script.id = 'jsonp-sync-stream';
                 script.src = `${API_URL}?callback=handleGoogleSheetResponse&_ts=${Date.now()}`;
@@ -515,6 +286,7 @@
             let uniquePlanners = new Set();
             let consolidatedMap = new Map();
 
+            // Consolidate repeating occurrences matching exactly against distinct equipment alert signatures
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
                 
@@ -534,11 +306,11 @@
 
             const displayDataArray = Array.from(consolidatedMap.values());
 
-            displayDataArray.forEach((row, index) => {
+            displayDataArray.forEach((row) => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 if (row.planner) uniquePlanners.add(plannerKey);
 
-                const computedCriticality = evaluateCriticality(row.alert);
+                const computedCriticality = (row.criticality || "LOW").toUpperCase();
                 const aging = calculateAgingDays(row.dateCaptured, row.status);
 
                 if (row.status !== "DONE") {
@@ -568,7 +340,7 @@
                     <td style="color: var(--text-muted); font-weight: 700; font-size: 10px;">${row.dateCaptured || 'N/A'}</td>
                     <td style="font-weight: 800; color: #0284c7; font-size: 11px;">${row.unitNo || 'N/A'}</td>
                     <td style="font-weight: 600;" title="${row.location}">${row.location || 'N/A'}</td>
-                    <td style="white-space: normal; line-height: 1.3; font-weight: 600; overflow: visible; text-overflow: clip;">${row.alert || 'N/A'}</td>
+                    <td style="white-space: normal; line-height: 1.3; font-weight: 600;">${row.alert || 'N/A'}</td>
                     <td style="text-align: center; font-weight: 800; font-size: 11px; color: #000;">${row.totalCounts}</td>
                     <td style="text-align: center;"><span class="crit-badge ${computedCriticality.toLowerCase()}">${computedCriticality}</span></td>
                     <td style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
@@ -651,12 +423,6 @@
         }
 
         async function pushRowUpdate(idsString, targetBtnId) {
-            if (API_URL.includes("YOUR_PASTED_GOOGLE_SHEETS") || !API_URL) {
-                alert("OFFLINE ENVIRONMENT: Log saved inside operational local array stream.");
-                processAndRenderDashboard();
-                return;
-            }
-
             const rowIds = idsString.split(',').map(Number);
             const matchedRecord = rawGoogleSheetData.find(r => r.rowId === rowIds[0]);
             
@@ -667,7 +433,6 @@
 
             try {
                 for (let currentId of rowIds) {
-                    // Send via standard form parameters matching backend architecture bounds
                     const formPayload = new URLSearchParams();
                     formPayload.append("rowId", currentId);
                     formPayload.append("plannedDate", matchedRecord.plannedDate || "");
@@ -677,9 +442,7 @@
                     await fetch(API_URL, {
                         method: "POST",
                         mode: "no-cors", 
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
                         body: formPayload.toString()
                     });
                 }
@@ -722,27 +485,15 @@
                 } else {
                     let existing = consolidatedMap.get(uniqueKey);
                     existing.totalCounts += parseInt(row.totalCounts || 1);
-                    if (new Date(row.dateCaptured) < new Date(existing.dateCaptured)) {
-                        existing.dateCaptured = row.dateCaptured;
-                    }
-                    if (!existing.action && row.action) existing.action = row.action;
-                    if (!existing.plannedDate && row.plannedDate) existing.plannedDate = row.plannedDate;
                 }
             });
 
-            const displayDataArray = Array.from(consolidatedMap.values());
-
-            displayDataArray.forEach(row => {
+            Array.from(consolidatedMap.values()).forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
 
-                const computedCriticality = evaluateCriticality(row.alert);
                 const aging = calculateAgingDays(row.dateCaptured, row.status);
-
-                const escapeCSV = (text) => {
-                    if (!text) return '""';
-                    return `"${text.toString().replace(/"/g, '""')}"`;
-                };
+                const escapeCSV = (text) => !text ? '""' : `"${text.toString().replace(/"/g, '""')}"`;
 
                 const rowData = [
                     escapeCSV(row.dateCaptured),
@@ -750,7 +501,7 @@
                     escapeCSV(row.location),
                     escapeCSV(row.alert),
                     row.totalCounts,
-                    escapeCSV(computedCriticality),
+                    escapeCSV(row.criticality),
                     row.status === 'DONE' ? '"RESOLVED"' : `"${aging} Days"`,
                     escapeCSV(plannerKey),
                     escapeCSV(row.plannedDate),
@@ -762,10 +513,8 @@
 
             const csvBlob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
-            const filterLabel = selectedPlannerFilter.toLowerCase().replace(/[^a-z0-9]/g, "_");
-            
             link.href = URL.createObjectURL(csvBlob);
-            link.setAttribute("download", `oaec_telematics_report_${filterLabel}_2026.csv`);
+            link.setAttribute("download", `oaec_telematics_report_${selectedPlannerFilter.toLowerCase()}_2026.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
