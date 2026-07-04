@@ -356,7 +356,7 @@
         <div class="stat-card pending">
             <div class="stat-title">Active Fleet Backlog</div>
             <div class="stat-leader" id="total-backlog-counter">0</div>
-            <div class="stat-sub">Total Unresolved Equipment Alerts</div>
+            <div class="stat-sub">Total Unresolved Equipment Items</div>
         </div>
     </div>
 
@@ -376,7 +376,7 @@
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
                     <th style="width: 45px; text-align: center;">Counts</th>
                     <th style="width: 60px; text-align: center;">Criticality</th>
-                    <th style="width: 75px; text-align: center;">Aging</th>
+                    <th style="width: 75px; text-align: center;">Aging (Excl Sun)</th>
                     <th style="width: 75px;">Planner</th>
                     <th style="width: 110px;">Planned Repair Date</th>
                     <th style="width: 160px;">Corrective Action Notes</th>
@@ -390,11 +390,11 @@
     </div>
 
     <script>
-        // Paste your exact macro deployment endpoint URL down below inside the string block:
         const API_URL = "https://script.google.com/macros/s/AKfycbwuoFWmnu-6F0X5U1n7ELNJhco3WzVUbiE8S6CJw35sgpf4VoJqNj9_SjMJ_a0y5Wg5/exec";
         
         let rawGoogleSheetData = [];
         let selectedPlannerFilter = "ALL";
+        
         let activeSessionUser = null; 
 
         // Registered Authorized Planners Directory (Master ADMIN Matrix Enabled)
@@ -657,12 +657,10 @@
             
             const btn = document.getElementById(`btn-${targetBtnId}`);
             btn.innerText = "SAVING...";
-            btn.disabled = true; // Protects network socket stream from collision double clicks
             btn.style.backgroundColor = "var(--omega-navy)";
             btn.style.color = "white";
 
             try {
-                // Iteratively write modifications over matching row targets cleanly 
                 for (let currentId of rowIds) {
                     const payload = {
                         rowId: currentId,
@@ -671,18 +669,11 @@
                         status: matchedRecord.status
                     };
 
-                    const response = await fetch(API_URL, {
+                    await fetch(API_URL, {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "text/plain;charset=utf-8" // Protects Web App from pre-flight CORS blocks
-                        },
+                        mode: "no-cors", 
                         body: JSON.stringify(payload)
                     });
-                    
-                    const resultText = await response.text();
-                    if (resultText.includes("ERROR")) {
-                        throw new Error(resultText);
-                    }
                 }
                 
                 btn.innerText = "✔ LINKED";
@@ -691,14 +682,11 @@
                     btn.style.backgroundColor = "";
                     btn.style.color = "";
                     btn.innerText = "Save";
-                    btn.disabled = false;
-                    loadDashboardData(); // Refreshes UI strictly upon verified execution receipt
-                }, 1200);
+                    loadDashboardData(); 
+                }, 1000);
             } catch (err) {
-                console.error("Network Exception Logged:", err);
-                alert("TRANSMISSION FAULT: " + err.message);
+                alert("TRANSMISSION FAULT: Sheet connection interrupted during field mapping updates.");
                 btn.innerText = "FAIL";
-                btn.disabled = false;
                 btn.style.backgroundColor = "var(--critical)";
             }
         }
@@ -710,6 +698,7 @@
                 return;
             }
 
+            // Headers mapping the system display schema
             const headers = [
                 "Date Logged", "Unit No", "Location", "Alert Log Description", 
                 "Counts", "Criticality", "Aging Days", "Planner", 
@@ -717,8 +706,9 @@
             ];
 
             let csvRows = [];
-            csvRows.push(headers.join(",")); 
+            csvRows.push(headers.join(",")); // Append header vector
 
+            // Process internal rows while respecting active filter matrix bounds
             let consolidatedMap = new Map();
             rawGoogleSheetData.forEach((row) => {
                 const uniqueKey = `${row.unitNo?.trim()}_${row.alert?.trim()}`;
@@ -739,11 +729,14 @@
 
             displayDataArray.forEach(row => {
                 const plannerKey = row.planner ? row.planner.trim().toUpperCase() : "UNASSIGNED";
+                
+                // Skip rows not matching the active queue user interface viewport filter
                 if (selectedPlannerFilter !== "ALL" && plannerKey !== selectedPlannerFilter) return;
 
                 const computedCriticality = evaluateCriticality(row.alert);
                 const aging = calculateAgingDays(row.dateCaptured, row.status);
 
+                // Escaping strings carefully to prevent cell delimiter collision breakages inside Excel
                 const escapeCSV = (text) => {
                     if (!text) return '""';
                     return `"${text.toString().replace(/"/g, '""')}"`;
@@ -765,6 +758,7 @@
                 csvRows.push(rowData.join(","));
             });
 
+            // Stream construction assembly and dispatch download event
             const csvBlob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             const filterLabel = selectedPlannerFilter.toLowerCase().replace(/[^a-z0-9]/g, "_");
