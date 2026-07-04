@@ -103,12 +103,18 @@
         .export-btn { background-color: #16a34a !important; color: white !important; border-color: #15803d !important; margin-left: auto; }
         .export-btn:hover { background-color: #15803d !important; }
 
-        /* High-Density Engine Grid Architecture */
+        /* 🛠️ High-Density Optimized Table Structural Matrix */
         .table-wrapper { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
-        th { background-color: var(--omega-navy); padding: 6px 8px; color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #111827; letter-spacing: 0.3px; }
-        td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; font-size: 11px; font-weight: 600; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
         
+        /* Optimized Padding Metrics for Maximum Horizontal Telemetry Real Estate */
+        th { background-color: var(--omega-navy); padding: 5px 6px; color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #111827; letter-spacing: 0.3px; }
+        td { padding: 4px 6px; border-bottom: 1px solid #e5e7eb; font-size: 11px; font-weight: 600; vertical-align: middle; color: var(--text-main); }
+        
+        /* Structural Column-Specific Formatting Engine */
+        td.nowrap-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        td.wrap-cell { white-space: normal; word-break: break-word; line-height: 1.25; }
+
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) td { background-color: #f9fafb; } 
         tr:hover td { background-color: #f3f4f6; }
@@ -240,18 +246,18 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 75px;">Date Logged</th>
+                    <th style="width: 70px;">Date Logged</th>
                     <th style="width: 55px;">Unit No.</th>
-                    <th style="width: 120px;">Location</th>
-                    <th style="width: auto; white-space: normal;">Alert Log Description</th>
+                    <th style="width: 130px;">Location</th>
+                    <th style="width: 32%;">Alert Log Description</th>
                     <th style="width: 45px; text-align: center;">Counts</th>
                     <th style="width: 60px; text-align: center;">Criticality</th>
-                    <th style="width: 75px; text-align: center;">Aging (Excl Sun)</th>
+                    <th style="width: 70px; text-align: center;">Aging (Excl Sun)</th>
                     <th style="width: 75px;">Planner</th>
-                    <th style="width: 110px;">Planned Repair Date</th>
-                    <th style="width: 160px;">Corrective Action Notes</th>
-                    <th style="width: 95px;">Status Workflow</th>
-                    <th style="width: 55px; text-align: center;">Action</th>
+                    <th style="width: 85px;">Planned Repair</th>
+                    <th style="width: 140px;">Corrective Action Notes</th>
+                    <th style="width: 80px; text-align: center;">Status Workflow</th>
+                    <th style="width: 50px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody id="master-table-body"></tbody>
@@ -341,12 +347,10 @@
             }
         }
 
-        /* 🔍 EXACT ROUTINE MATCHING YOUR CRITICALITY FRAMEWORK */
         function evaluateCriticality(alertText) {
             if (!alertText) return "LOW";
             const txt = alertText.toLowerCase();
             
-            // 🚨 HIGH CRITICALITY MATCHES
             if (
                 txt.includes("coolant level: data valid but below operational range") ||
                 txt.includes("radiator coolant level") ||
@@ -356,7 +360,6 @@
                 return "HIGH";
             }
             
-            // ⚠️ MEDIUM CRITICALITY MATCHES
             if (
                 txt.includes("hydraulic oil filter clogging") ||
                 txt.includes("hydraulic filter clogging") ||
@@ -369,7 +372,6 @@
                 return "MEDIUM";
             }
             
-            // 🔧 ROUTINE MAINTENANCE / COMFORT / TELEMATICS FAULTS
             return "LOW";
         }
 
@@ -450,8 +452,6 @@
             });
 
             consolidatedDisplayRecords = Array.from(consolidatedMap.values());
-
-            // Render analytics widgets layer dynamically without relying on the old metrics row
             renderAnalyticsChartsLayer(consolidatedDisplayRecords);
 
             consolidatedDisplayRecords.forEach((row) => {
@@ -568,19 +568,19 @@
                 const linkedIdsString = row.alliedRowIds.join(',');
 
                 tr.innerHTML = `
-                    <td style="color: var(--text-muted); font-weight: 700; font-size: 10px;">${row.dateCaptured || 'N/A'}</td>
-                    <td style="font-weight: 800; color: #0284c7; font-size: 11px;">${row.unitNo || 'N/A'}</td>
-                    <td style="font-weight: 600;" title="${row.location}">${row.location || 'N/A'}</td>
-                    <td style="white-space: normal; line-height: 1.3; font-weight: 600;">${row.alert || 'N/A'}</td>
-                    <td style="text-align: center; font-weight: 800; font-size: 11px; color: #000;">${row.totalCounts}</td>
-                    <td style="text-align: center;"><span class="crit-badge ${computedCriticality.toLowerCase()}">${computedCriticality}</span></td>
-                    <td style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
-                    <td style="font-weight: 700; color: var(--omega-navy);">${plannerKey}</td>
+                    <td class="nowrap-cell" style="color: var(--text-muted); font-weight: 700; font-size: 10px;">${row.dateCaptured || 'N/A'}</td>
+                    <td class="nowrap-cell" style="font-weight: 800; color: #0284c7; font-size: 11px;">${row.unitNo || 'N/A'}</td>
+                    <td class="wrap-cell">${row.location || 'N/A'}</td>
+                    <td class="wrap-cell" style="font-weight: 700; color: #000;">${row.alert || 'N/A'}</td>
+                    <td class="nowrap-cell" style="text-align: center; font-weight: 800; font-size: 11px;">${row.totalCounts}</td>
+                    <td class="nowrap-cell" style="text-align: center;"><span class="crit-badge ${computedCriticality.toLowerCase()}">${computedCriticality}</span></td>
+                    <td class="nowrap-cell" style="text-align: center;"><span class="aging-tag ${agingClass}">${row.status === 'DONE' ? 'RESOLVED' : `${aging} DAYS`}</span></td>
+                    <td class="nowrap-cell" style="font-weight: 700; color: var(--omega-navy);">${plannerKey}</td>
                     
-                    <td style="color: var(--text-muted); font-weight: 700;">${row.plannedDate || '—'}</td>
-                    <td style="font-weight: 600;" title="${row.action || ''}">${row.action || '—'}</td>
-                    <td style="text-align: center;"><span class="status-badge-inline ${row.status.toLowerCase()}">${row.status === 'DONE' ? '✅ DONE' : '⏳ PENDING'}</span></td>
-                    <td style="text-align: center;">
+                    <td class="nowrap-cell" style="color: var(--text-muted); font-weight: 700;">${row.plannedDate || '—'}</td>
+                    <td class="wrap-cell" title="${row.action || ''}">${row.action || '—'}</td>
+                    <td class="nowrap-cell" style="text-align: center;"><span class="status-badge-inline ${row.status.toLowerCase()}">${row.status === 'DONE' ? '✅ DONE' : '⏳ PENDING'}</span></td>
+                    <td class="nowrap-cell" style="text-align: center;">
                         <button class="edit-action-btn" ${disableFlag} onclick="openEditModal('${linkedIdsString}', '${row.unitNo}', '${row.plannedDate || ''}', '${row.action || ''}', '${row.status || 'PENDING'}')">📝 Edit</button>
                     </td>
                 `;
