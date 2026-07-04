@@ -73,8 +73,8 @@
         .stat-card.risk .stat-badge { background: #fef2f2; color: var(--critical); border: 1px solid #fca5a5; }
         .stat-card.volume .stat-badge { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
 
-        /* 📊 PROGRESSION & SHORTENED CHART GRID PANEL */
-        .analytics-grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: 6px; margin-bottom: 6px; }
+        /* 📊 UPDATED SIDE-BY-SIDE ANALYTICS GRID CONTAINER */
+        .analytics-grid { display: grid; grid-template-columns: 1fr 2.5fr; gap: 6px; margin-bottom: 6px; }
         .analytics-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .analytics-header-title { font-size: 10px; font-weight: 800; color: var(--omega-navy); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         
@@ -84,15 +84,20 @@
         .progress-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--text-main); }
         .progress-stats-row { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; font-weight: 700; color: var(--text-muted); }
 
-        /* Chart Tweaks: Expanded Label Room & Balanced Shorter Bars */
-        .fault-chart-list { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
-        .fault-chart-row { display: flex; align-items: center; gap: 8px; }
-        .fault-chart-label { width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 10px; color: var(--text-main); }
-        .fault-chart-bar-wrapper { flex-grow: 1; max-width: 140px; background: #f3f4f6; height: 10px; border-radius: 2px; overflow: hidden; position: relative; }
-        .fault-chart-bar-fill { background-color: var(--omega-navy); height: 100%; width: 0%; border-radius: 2px; transition: width 0.4s ease-out; }
-        .fault-chart-count { width: 30px; text-align: left; font-weight: 800; font-size: 10px; color: var(--text-main); }
+        /* Split Screen Container for Visual Leaderboards */
+        .leaderboards-split-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .chart-split-column { display: flex; flex-direction: column; }
+        .chart-split-title { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;}
 
-        /* 🔍 ADVANCED SEARCH STRIP STYLING */
+        .fault-chart-list { display: flex; flex-direction: column; gap: 4px; }
+        .fault-chart-row { display: flex; align-items: center; gap: 6px; }
+        .fault-chart-label { width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 10px; color: var(--text-main); }
+        .fault-chart-bar-wrapper { flex-grow: 1; max-width: 100px; background: #f3f4f6; height: 10px; border-radius: 2px; overflow: hidden; position: relative; }
+        .fault-chart-bar-fill { background-color: var(--omega-navy); height: 100%; width: 0%; border-radius: 2px; transition: width 0.4s ease-out; }
+        .fault-chart-bar-fill.planner-bar { background-color: var(--normal); }
+        .fault-chart-count { width: 45px; text-align: left; font-weight: 800; font-size: 10px; color: var(--text-main); }
+
+        /* 🔍 SEARCH AND FILTERS PANEL */
         .controls-panel { background-color: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; margin-bottom: 6px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .controls-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .search-input-group { position: relative; display: flex; align-items: center; }
@@ -194,7 +199,7 @@
     <div class="analytics-grid">
         <div class="analytics-card">
             <div class="analytics-header-title">
-                <span>Fleet Resolution Progression</span>
+                <span>Fleet Progress</span>
                 <span id="chart-percentage-text" style="color: var(--success);">0% Completed</span>
             </div>
             <div class="progress-container">
@@ -204,15 +209,26 @@
                 </div>
                 <div class="progress-stats-row">
                     <div>Cleared: <span id="analytics-cleared-count" style="color: var(--success);">0</span></div>
-                    <div>Remaining Backlog: <span id="analytics-pending-count" style="color: var(--warning);">0</span></div>
+                    <div>Backlog: <span id="analytics-pending-count" style="color: var(--warning);">0</span></div>
                 </div>
             </div>
         </div>
         
         <div class="analytics-card">
-            <div class="analytics-header-title">Top Recurrent Faults Leaderboard</div>
-            <div class="fault-chart-list" id="chart-faults-container">
-                <div style="color: var(--text-muted); font-size:10px; font-weight:700; text-align:center; padding-top:4px;">No fault metrics tracked yet.</div>
+            <div class="leaderboards-split-wrapper">
+                <div class="chart-split-column">
+                    <div class="chart-split-title">Top Recurrent Faults</div>
+                    <div class="fault-chart-list" id="chart-faults-container">
+                        <div style="color: var(--text-muted); font-size:10px; font-weight:700; padding-top:4px;">No metrics logged.</div>
+                    </div>
+                </div>
+                
+                <div class="chart-split-column">
+                    <div class="chart-split-title">Planner Backlog Distribution</div>
+                    <div class="fault-chart-list" id="chart-planners-container">
+                        <div style="color: var(--text-muted); font-size:10px; font-weight:700; padding-top:4px;">All queues clear!</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -248,16 +264,16 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 60px;">Date Logged</th>
-                    <th style="width: 50px;">Unit No.</th>
-                    <th style="width: 110px;">Location</th>
+                    <th style="width: 75px;">Date Logged</th>
+                    <th style="width: 55px;">Unit No.</th>
+                    <th style="width: 120px;">Location</th>
                     <th style="width: auto; white-space: normal;">Alert Log Description</th>
                     <th style="width: 45px; text-align: center;">Counts</th>
                     <th style="width: 60px; text-align: center;">Criticality</th>
-                    <th style="width: 60px; text-align: center;">Aging</th>
+                    <th style="width: 75px; text-align: center;">Aging</th>
                     <th style="width: 75px;">Planner</th>
                     <th style="width: 110px;">Planned Repair Date</th>
-                    <th style="width: 140px;">Corrective Action Notes</th>
+                    <th style="width: 160px;">Corrective Action Notes</th>
                     <th style="width: 95px;">Status Workflow</th>
                     <th style="width: 55px; text-align: center;">Action</th>
                 </tr>
@@ -478,39 +494,66 @@
             document.getElementById('analytics-cleared-count').innerText = cleared;
             document.getElementById('analytics-pending-count').innerText = pending;
 
+            // Compute Fault Frequency and Planner Backlog Simultaneously
             let faultFrequencies = {};
+            let plannerBacklogs = {};
+
             records.forEach(r => {
-                if (r.status !== "DONE" && r.alert) {
-                    const desc = r.alert.trim();
-                    faultFrequencies[desc] = (faultFrequencies[desc] || 0) + r.totalCounts;
+                if (r.status !== "DONE") {
+                    if (r.alert) {
+                        const desc = r.alert.trim();
+                        faultFrequencies[desc] = (faultFrequencies[desc] || 0) + r.totalCounts;
+                    }
+                    const plannerName = r.planner ? r.planner.trim().toUpperCase() : "UNASSIGNED";
+                    plannerBacklogs[plannerName] = (plannerBacklogs[plannerName] || 0) + 1;
                 }
             });
 
-            const sortedFaults = Object.entries(faultFrequencies)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 3); 
-
-            const chartContainer = document.getElementById('chart-faults-container');
+            // 1. Render Left Column: Top Recurrent Faults
+            const sortedFaults = Object.entries(faultFrequencies).sort((a, b) => b[1] - a[1]).slice(0, 3); 
+            const faultChartContainer = document.getElementById('chart-faults-container');
+            
             if (sortedFaults.length === 0) {
-                chartContainer.innerHTML = '<div style="color: var(--text-muted); font-size:10px; font-weight:700; text-align:center; padding-top:14px;">All clear! No pending faults logged.</div>';
-                return;
+                faultChartContainer.innerHTML = '<div style="color:var(--text-muted); font-size:10px; padding-top:4px;">No active faults logged.</div>';
+            } else {
+                const maxFaultOccurrence = sortedFaults[0][1];
+                faultChartContainer.innerHTML = '';
+                sortedFaults.forEach(([faultName, count]) => {
+                    const barWidth = maxFaultOccurrence > 0 ? Math.round((count / maxFaultOccurrence) * 100) : 0;
+                    faultChartContainer.innerHTML += `
+                        <div class="fault-chart-row">
+                            <div class="fault-chart-label" title="${faultName}">${faultName}</div>
+                            <div class="fault-chart-bar-wrapper">
+                                <div class="fault-chart-bar-fill" style="width: ${barWidth}%;"></div>
+                            </div>
+                            <div class="fault-chart-count">${count}x</div>
+                        </div>
+                    `;
+                });
             }
 
-            const maxOccurrence = sortedFaults[0][1];
-            chartContainer.innerHTML = '';
+            // 2. Render Right Column: Planner Backlog Distribution Chart
+            const sortedPlanners = Object.entries(plannerBacklogs).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            const plannerChartContainer = document.getElementById('chart-planners-container');
 
-            sortedFaults.forEach(([faultName, count]) => {
-                const barWidth = maxOccurrence > 0 ? Math.round((count / maxOccurrence) * 100) : 0;
-                chartContainer.innerHTML += `
-                    <div class="fault-chart-row">
-                        <div class="fault-chart-label" title="${faultName}">${faultName}</div>
-                        <div class="fault-chart-bar-wrapper">
-                            <div class="fault-chart-bar-fill" style="width: ${barWidth}%;"></div>
+            if (sortedPlanners.length === 0) {
+                plannerChartContainer.innerHTML = '<div style="color:var(--text-muted); font-size:10px; padding-top:4px;">All queues clear!</div>';
+            } else {
+                const maxPlannerCount = sortedPlanners[0][1];
+                plannerChartContainer.innerHTML = '';
+                sortedPlanners.forEach(([planner, count]) => {
+                    const barWidth = maxPlannerCount > 0 ? Math.round((count / maxPlannerCount) * 100) : 0;
+                    plannerChartContainer.innerHTML += `
+                        <div class="fault-chart-row">
+                            <div class="fault-chart-label" title="${planner}">${planner}</div>
+                            <div class="fault-chart-bar-wrapper">
+                                <div class="fault-chart-bar-fill planner-bar" style="width: ${barWidth}%;"></div>
+                            </div>
+                            <div class="fault-chart-count">${count} ${count === 1 ? 'item' : 'items'}</div>
                         </div>
-                        <div class="fault-chart-count">${count}x</div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
         }
 
         function handleAdvancedFiltersTrigger() {
